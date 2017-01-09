@@ -33,7 +33,14 @@
 		$.closeAllBlades();
 		$.gs.ts.id(data.id);
 		$.gs.ts.text(data.name);
+		$.gs.ti.id("");
+		$.gs.ti.text("");
+		$.gs.tc.id("");
+		$.gs.tc.text("");
+		
 		$.gs.sti.removeAll();
+		$.gs.stc.removeAll();
+		
 		$.showBlade({
 			title : data.name + " API接口",
 			url : "./ti/list?rid=" + data.id,
