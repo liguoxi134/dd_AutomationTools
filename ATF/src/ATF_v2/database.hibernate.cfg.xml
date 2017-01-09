@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE database-config [
+<!ELEMENT database ANY>
+<!ATTLIST database id ID #REQUIRED>
+<!ATTLIST database name CDATA #REQUIRED>
+<!ATTLIST database externalid CDATA #REQUIRED>
+<!ATTLIST database state (true|false) #REQUIRED>
+]>
+<database-config>
+	<database id="dingdan" name="订单系统" externalid="订单系统" state="true"></database>
+	<database id="fapiao" name="发票系统" externalid="发票系统" state="true"></database>
+	<database id="jiaoyi" name="交易系统" externalid="交易系统" state="true"></database>
+	<database id="jiesuan" name="结算系统" externalid="结算系统" state="true"></database>
+	<database id="jit" name="JIT系统" externalid="JIT系统" state="true"></database>
+	<database id="lipingka" name="礼品卡系统" externalid="礼品卡系统" state="true"></database>
+	<database id="liquan" name="礼券系统" externalid="礼券系统" state="true"></database>
+	<database id="tuihuanhuo" name="退换货系统" externalid="退换货系统" state="true"></database>
+	<database id="yicang" name="移仓系统" externalid="移仓系统" state="true"></database>
+	<database id="zhifu" name="支付系统" externalid="支付系统" state="true"></database>
+</database-config>

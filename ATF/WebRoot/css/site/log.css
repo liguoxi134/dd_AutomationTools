@@ -1,0 +1,71 @@
+@CHARSET "UTF-8";
+
+.log-footer {
+  display: flex;
+  font-size: 0.9rem;
+  justify-content: center;
+  margin: 10px 0;
+}
+.pager {
+  width: 70%;
+  text-align: center;
+}
+.jumper {
+  width: 30%;
+  text-align: right;
+  padding-right:20px;
+}
+.pager a {
+  outline: 1px solid currentColor;
+  padding: 5px;
+  min-width: 80px;
+  display: inline-block;
+}
+.jumper a {
+  outline: 1px solid currentColor;
+  padding: 2px 5px;
+}
+.pager a:hover,.jumper a:hover{
+	background-color: rgba(25, 80, 123,0.1);
+}
+.jumper input {
+  border: 1px solid currentColor;
+  padding: 2px 5px;
+  /*! border-width: 0px; */
+  width: 50px;
+}
+.log-list table{
+	border: 1px solid rgba(25, 80, 123,0.5);
+	border-collapse: collapse;
+	table-layout: fixed;
+	width: 100%;
+} 
+.log-list thead tr {
+  /*! border: 1px solid #00bcf2; */
+  background-color: rgba(25, 80, 123,0.2);
+  border-bottom: 2px solid rgba(25, 80, 123,0.5);
+}
+.log-list thead tr th {
+  border: 1px solid rgba(25, 80, 123,0.5);
+}
+.log-list tbody tr{
+	cursor: pointer;
+}
+.log-list tbody tr:NTH-CHILD(2n){
+	background-color: rgba(25, 80, 123,0.1);
+}
+.log-list tbody td {
+  border: 1px solid rgba(25, 80, 123,0.5);
+  padding: 2px 5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.log-list tr.active td {
+	white-space: pre-wrap;
+	background-color: rgba(25, 80, 123,0.3);
+}
+
+.log-list tbody tr:hover{
+	background-color: rgba(25, 80, 123,0.2);
+}

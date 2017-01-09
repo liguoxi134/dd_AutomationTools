@@ -1,0 +1,115 @@
+@CHARSET "UTF-8";
+.fxs-contextMenu {
+    display:none;
+    position:fixed;
+    min-width:225px;
+    padding:10px 0;
+    box-sizing:border-box;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+    z-index:300;
+    max-height:100vh;
+    overflow-x:hidden;
+    overflow-y:auto;
+    border-style:solid;
+    border-width:1px
+}
+.fxs-contextMenu:focus {
+    outline:0
+}
+.fxs-contextMenu.fxs-contextMenu-active {
+    display:block
+}
+.fxs-contextMenu-item {
+    display:-webkit-flex;
+    display:flex;
+    -webkit-align-items:center;
+    align-items:center;
+    height:30px;
+    padding:5px 25px;
+    box-sizing:border-box;
+    font-family:az_ea_font,wf_segoe-ui_normal,"Segoe UI","Segoe WP",Tahoma,Arial,sans-serif;
+    font-size:13px;
+    line-height:normal;
+    cursor:default
+}
+.fxs-contextMenu-text {
+    -webkit-flex:1 1 auto;
+    flex:1 1 auto;
+    height:20px;
+    padding-right:10px;
+}
+.fxs-contextMenu-icon {
+    -webkit-flex:0 0 auto;
+    flex:0 0 auto;
+    -webkit-align-content:flex-end;
+    align-content:flex-end;
+    height:21px;
+    width:21px;
+    display:-webkit-flex;
+    display:flex;
+    -webkit-justify-content:center;
+    justify-content:center;
+    -webkit-align-items:center;
+    align-items:center
+}
+.fxs-contextMenu-icon>svg {
+    height:16px;
+    width:16px
+}
+.fxs-contextMenu-itemList {
+    list-style-type:none;
+    margin:0;
+    padding:0
+}
+.fxs-contextMenu-extensioncommand .fxs-contextMenu-icon {
+    display:none
+}
+.fxs-contextMenu-extensioncommand.fxs-contextMenu-itemDisabled {
+    display:block;
+    opacity:.5
+}
+.fxs-contextMenu-extensioncommand.fxs-contextMenu-itemDisabled:hover {
+    background-color:transparent
+}
+.fxs-contextMenu-itemDisabled {
+    display:none
+}
+.fxs-contextMenu-form {
+    padding:8px 20px;
+    display:none
+}
+.fxs-contextMenu-form.fxs-contextMenu-active {
+    display:block
+}
+.fxs-dialogballoon.azc-balloon {
+    opacity:1;
+    width:auto;
+    max-width:550px
+}
+.fxs-dialogballoon.azc-balloon .azc-balloon-content {
+    padding:0
+}
+.fxs-dialogballoon.azc-balloon.azc-balloon-box-bottom .azc-balloon-pointer {
+    border-bottom-color:#464f59
+}
+.fxs-dialogballoon.azc-balloon.azc-balloon-box-top .azc-balloon-pointer {
+    border-top-color:#3c454f
+}
+.fxs-contextMenu-icon svg.msportalfx-contextmenu-grid-hero,.fxs-contextMenu-icon svg.msportalfx-contextmenu-grid-herotall,.fxs-contextMenu-icon svg.msportalfx-contextmenu-grid-herowide,.fxs-contextMenu-icon svg.msportalfx-contextmenu-grid-large,.fxs-contextMenu-icon svg.msportalfx-contextmenu-grid-mini,.fxs-contextMenu-icon svg.msportalfx-contextmenu-grid-normal,.fxs-contextMenu-icon svg.msportalfx-contextmenu-grid-small,.fxs-contextMenu-icon svg.msportalfx-contextmenu-grid-tall,.fxs-contextMenu-icon svg.msportalfx-contextmenu-grid-wide {
+    height:20px;
+    width:20px
+}
+.msportalfx-contextmenu-grid rect {
+    display:none
+}
+.msportalfx-contextmenu-grid-hero .msportalfx-grid-rect-hero,.msportalfx-contextmenu-grid-herotall .msportalfx-grid-rect-herotall,.msportalfx-contextmenu-grid-herowide .msportalfx-grid-rect-herowide,.msportalfx-contextmenu-grid-large .msportalfx-grid-rect-large,.msportalfx-contextmenu-grid-mini .msportalfx-grid-rect-mini,.msportalfx-contextmenu-grid-normal .msportalfx-grid-rect-normal,.msportalfx-contextmenu-grid-small .msportalfx-grid-rect-small,.msportalfx-contextmenu-grid-tall .msportalfx-grid-rect-tall,.msportalfx-contextmenu-grid-wide .msportalfx-grid-rect-wide {
+    display:block
+}
+.fxs-popup {
+    background-color: #fff;
+    color: #2d3239;
+    border-color: #b3b3b3;
+}

@@ -1,0 +1,4 @@
+<%@tag pageEncoding="UTF-8"%>
+<svg height="16" width="16" preserveAspectRatio="xMinYMin slice" viewBox="0 0 76 76" style="-moz-transform: scale(2);-ms-transform: scale(2);-o-transform: scale(2);-webkit-transform: scale(2);transform: scale(2);"> 
+    <path d="M 42.7499,25.3335L 50.6666,33.2501L 31.6667,52.25L 23.75,44.3334L 42.7499,25.3335 Z M 52.1704,31.6664L 44.3333,23.8293L 47.6921,20.4706C 48.9288,19.2339 50.9338,19.2339 52.1705,20.4706L 55.5292,23.8293C 56.7659,25.066 56.7659,27.071 55.5292,28.3077L 52.1704,31.6664 Z M 21.7709,55.0207L 20.9792,54.2291L 23.0573,47.5988L 28.4011,52.9426L 21.7709,55.0207 Z"/>
+</svg>
