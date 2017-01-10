@@ -7,14 +7,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.usertype.DynamicParameterizedType.ParameterType;
-
 import com.dangdang.tools.atf.entity.TestCase;
 import com.dangdang.tools.atf.entity.TestConfig;
 import com.dangdang.tools.atf.entity.TestInterface;
 import com.dangdang.tools.atf.entityenum.RequestType;
 import com.dangdang.tools.atf.factory.DataFactory;
 import com.dangdang.tools.atf.helper.HttpHelper;
+import com.dangdang.tools.atf.helper.MySqlHelper;
 import com.dangdang.tools.atf.models.VerifyDatabaseConfig;
 import com.dangdang.tools.common.format.IFormater;
 import com.dangdang.tools.common.format.json.JsonFormater;
@@ -133,31 +132,44 @@ public class TestConfigPage extends BasePage {
 		}
 	}
 
-	public static void Run(HttpServletRequest request, HttpServletResponse response) {
-		DEBUG("TestConfigPage.Run()");
+	public static void Send(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			String url = getString(request, "url");
-			DEBUG("TestConfigPage.Run(): Run URL:" + url);
-			String itype = getString(request, "itype");
-			ParameterType ptype = getEnum(request, "ptype", ParameterType.class, ParameterType.JSON);
-			DEBUG("TestConfigPage.Run(): Run METHOD:" + itype);
-			String args = getString(request, "args");
-			DEBUG("TestConfigPage.Run(): Run ARGS:" + args);
-			response.setContentType("text/plain; charset=UTF-8");
-			if (itype.equalsIgnoreCase("post")) {
-				String result = HttpHelper.doPost(url, args, ptype);
-				writeMessage(response, result, true);
-			} else if (itype.equalsIgnoreCase("get")) {
-				String result = HttpHelper.sendGet(url, args);
-				writeMessage(response, result, true);
+			String requestBody = getString(request, "requestBody");
+			String[] requestHeaders = getStrings(request, "requestHeaders[]");
+			String requestMethod = getString(request, "requestMethod");
+			String requestUrl = getString(request, "requestUrl");
+			String responseData = "";
+			if (requestMethod.equalsIgnoreCase("get")) {
+				responseData = HttpHelper.sendGet(requestUrl, requestBody, requestHeaders);
 			} else {
-				WARN("TestConfigPage.Run(): 接口类型为非标准类型");
-				writeMessage(response, "接口类型为非标准类型", false);
+				responseData = HttpHelper.doPost(requestUrl, requestBody, requestHeaders);
 			}
+			writeMessage(response, responseData, true);
 		} catch (Exception e) {
-			ERROR("TestConfigPage.Run(): Run test case failed, Exception Message:" + e.getMessage());
-			writeMessage(response, "异常:" + e.getMessage(), false);
+			writeMessage(response, e.getMessage(), true);
 		}
 	}
 
+	public static void Query(HttpServletRequest request, HttpServletResponse response) {
+		String responseData = null;
+		try {
+			String server = getString(request, "server");
+			String database = getString(request, "database");
+			ObjectMapper map = new ObjectMapper();
+			JsonNode serverNode = map.readTree(server);
+
+			String serverType = serverNode.get("type").textValue().toLowerCase();
+			String ip = serverNode.get("ip").textValue();
+			String port = serverNode.get("port").textValue();
+			String user = serverNode.get("uid").textValue();
+			String pwd = serverNode.get("pwd").textValue();
+			String connStr = "jdbc:" + serverType + "://" + ip + ":" + port + "/" + database + "?user=" + user + "&password=" + pwd;
+			String sql = getString(request, "query");
+			responseData = MySqlHelper.executeQuery(connStr, sql);
+			writeMessage(response, responseData, true);
+		} catch (Exception e) {
+			responseData = e.getMessage();
+			writeMessage(response, responseData, false);
+		}
+	}
 }

@@ -60,8 +60,12 @@ public class HibernateHelper extends LoggerObject {
 				// atf_db_lipingka.ti;
 				// insert into atf_dbs_lipingka.tbl_TestCase select * from
 				// atf_db_lipingka.tc;
-				System.out.println("insert into atf_dbs_"+config.getId()+".tbl_TestInterface select * from atf_db_"+config.getId()+".ti");
-				System.out.println("insert into atf_dbs_"+config.getId()+".tbl_TestCase select * from atf_db_"+config.getId()+".tc");
+				// System.out.println("insert into
+				// atf_dbs_"+config.getId()+".tbl_TestInterface select * from
+				// atf_db_"+config.getId()+".ti");
+				// System.out.println("insert into
+				// atf_dbs_"+config.getId()+".tbl_TestCase select * from
+				// atf_db_"+config.getId()+".tc");
 				DEBUG("Add new DATABASE: " + config.toJson());
 			}
 		} catch (DocumentException e) {
@@ -205,7 +209,7 @@ public class HibernateHelper extends LoggerObject {
 					DEBUG("The SDO is not deleted:" + _t.toJson());
 					return t;
 				}
-			}else{
+			} else {
 				return t;
 			}
 		}

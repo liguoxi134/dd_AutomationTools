@@ -460,32 +460,13 @@ testCaseRunViewModel.prototype.getCommands = function() {
 	}
 	return [shExpPanelCommand, shRealPanelCommand];
 }
+testConfigRunViewModel.prototype.getCommands = function() {
+	return [];
+}
+testConfigDetailsViewModel.prototype.getCommands = function() {
 
-inputAndOutputViewModel.prototype.getCommands = function() {
+	var vm = testConfigDetailsViewModel.prototype.vm;
 
-	var vm = inputAndOutputViewModel.prototype.vm;
-
-	//	function packageVerifyConfig() {
-	//		return {
-	//			"dbaddress" : vm.tabER.dbaddress(),
-	//			"dbname" : vm.tabER.dbname(),
-	//			"dbpwd" : vm.tabER.dbpwd(),
-	//			"dbuser" : vm.tabER.dbuser(),
-	//			"query" : vm.tabER.query(),
-	//		}
-	//	}
-	function packageConfig(expVerifyConfig) {
-		return {
-			testSystemId : $.gs.ts.id(),
-			"rid" : vm.referenceId,
-			"argType" : vm.tabPL.selectedType(),
-			"argConfig" : vm.tabPL.text(),
-			"expVerifyType" : vm.tabER.selectedVerify(),
-			"expVerifyConfig" : JSON.stringify(expVerifyConfig),
-			"expType" : vm.tabER.selectedType(),
-			"expConfig" : vm.tabER.text()
-		}
-	}
 	function saveClick() {
 		var postData = {
 			testSystemId : $.gs.ts.id(),
@@ -504,36 +485,21 @@ inputAndOutputViewModel.prototype.getCommands = function() {
 			}
 		})
 	}
-	function runClick() {
-		vm.currentBlade().closeNextAllBlades();
-		var newBlade = $.showBlade({
-			title : "参数测试",
-			url : "./io/run",
-		});
-		newBlade.ensureElementIntoView();
-	//		$.ajax({
-	//			url : './io/run',
-	//			datatype : 'text',
-	//			data : {
-	//				testSystemId : $.gs.ts.id(),
-	//				"url" : vm.testInterfaceURL(),
-	//				"itype" : vm.testInterfaceType(),
-	//				"ptype" : vm.tabPL.selectedType(),
-	//				"args" : vm.tabPL.text()
-	//			},
-	//			type : 'post',
-	//			success : function(data, status) {
-	//				if (data) {
-	//					if (data.message) {
-	//						data = data.message;
-	//					}
-	//				} else {
-	//					data = "如果看到此提示，请告知开发人员，谢谢";
-	//				}
-	//				newBlade.setBladeHtml("<div class=\"form-item textarea\" style=\"height: calc(100% - 30px);\"><label style=\"height: 100%;\"><small>测试结果：</small><textarea style=\"height: calc(100% - 24px);\" readonly rows=\"15\">" + data + "</textarea></label></div>");
-	//			}
-	//		});
-	}
+//	function runClick() {
+//		
+//		$.gs.io.requestBody(vm.inArgs.requestBody());
+//		$.gs.io.requestHeaders(vm.summary.requestHeaders());
+//		$.gs.io.requestMethod(vm.summary.requestMethod());
+//		$.gs.io.requestType(vm.inArgs.getRequestType());
+//		$.gs.io.requestUrl(vm.summary.requestUrl());
+//		
+//		vm.currentBlade().closeNextAllBlades();
+//		var newBlade = $.showBlade({
+//			title : "参数测试",
+//			url : "./io/run",
+//		});
+//		newBlade.ensureElementIntoView();
+//	}
 	var saveCommand = {
 		icon : $.bladeIcons.saveIcon,
 		text : "保存",
@@ -545,12 +511,12 @@ inputAndOutputViewModel.prototype.getCommands = function() {
 		click : vm.refresh
 	}
 
-	var runCommand = {
-		icon : $.bladeIcons.runIcon,
-		text : "执行",
-		click : runClick
-	}
-	return [saveCommand, refreshCommand, runCommand];
+//	var runCommand = {
+//		icon : $.bladeIcons.runIcon,
+//		text : "执行",
+//		click : runClick
+//	}
+	return [saveCommand, refreshCommand];
 }
 jobScheduleViewModel.prototype.getCommands = function() {
 	var vm = jobScheduleViewModel.prototype.vm;

@@ -204,8 +204,8 @@ testCaseRunViewModel.prototype.refresh = function() {
 	$.post("./tc/execute", postData, executeResponse);
 }
 
-inputAndOutputViewModel.prototype.refresh = function() {
-	var vm = inputAndOutputViewModel.prototype.vm;
+testConfigDetailsViewModel.prototype.refresh = function() {
+	var vm = testConfigDetailsViewModel.prototype.vm;
 	vm.isLoadingData(true);
 	function refreshResponse(data) {
 		if (data) {

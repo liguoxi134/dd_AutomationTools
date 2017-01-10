@@ -41,9 +41,13 @@ testCaseRunViewModel.prototype.init = function() {
 	var vm = testCaseRunViewModel.prototype.vm;
 	init(vm, "#runTestCase")
 };
-inputAndOutputViewModel.prototype.init = function() {
-	var vm = inputAndOutputViewModel.prototype.vm;
-	init(vm, "#ioParameter")
+testConfigDetailsViewModel.prototype.init = function() {
+	var vm = testConfigDetailsViewModel.prototype.vm;
+	init(vm, "#detailsTestConfig")
+};
+testConfigRunViewModel.prototype.init = function() {
+	var vm = testConfigRunViewModel.prototype.vm;
+	init(vm, "#runTestConfig")
 };
 jobScheduleViewModel.prototype.init = function() {
 	var vm = jobScheduleViewModel.prototype.vm;

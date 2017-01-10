@@ -19,6 +19,7 @@
 		<atf:tile-item tag="div" text="校验类型" bind="text:verifyType.value"></atf:tile-item>
 		<atf:tile-item tag="div" text="返回值类型" bind="text:getResultType()"></atf:tile-item>
 		<input style="margin-top:15px;font-size: 12px;" value="格式化参数信息" type="button" data-bind="click: analysis">
+		<input style="margin-top:15px;font-size: 12px;" value="初始化预期结果" type="button" data-bind="click: send">
 		<!-- /ko -->
 		<!-- ko with:editConfig -->
 		<atf:form_textarea text="预期值" bind="value: text, valueUpdate: 'afterkeydown'"></atf:form_textarea>

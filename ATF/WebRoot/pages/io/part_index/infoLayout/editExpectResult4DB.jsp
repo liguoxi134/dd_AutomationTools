@@ -29,6 +29,7 @@
 
 	<atf:tile-item tag="li" text="数据库名" bind="text:database"></atf:tile-item>
 	<atf:tile-item tag="li" text="查询语句" bind="text:query"></atf:tile-item>
+	<atf:tile-item tag="li" text="预期结果" bind="text:text"></atf:tile-item>
 </ul>
 <!-- /ko -->
 <%-- <jsp:include page="/pages/io/part_index/infoLayout/createExpectResult4DB.jsp"></jsp:include> --%>

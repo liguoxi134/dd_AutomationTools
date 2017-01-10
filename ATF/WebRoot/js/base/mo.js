@@ -13,7 +13,7 @@ var callback = function(records, instance) {
 	records.map(function(record) {
 		if (record.type === "childList") {
 			$.gs.blades.data.removeAll();
-			$(".fxs-journey-layout section").each(function() {
+			$(".fxs-journey-layout>section.fxs-blade-placeholder").each(function() {
 				var title = $(".fxs-blade-title-titleText", this).get(0);
 				var nodes = title.childNodes;
 				var names = [];

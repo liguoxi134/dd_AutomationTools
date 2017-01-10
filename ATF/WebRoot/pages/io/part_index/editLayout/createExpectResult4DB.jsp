@@ -19,7 +19,7 @@
 		<atf:form_select text="选择服务器" bind="options:$parent.databaseConfig.verifyServers, optionsText: 'name', selectedOptions:server"></atf:form_select>
 		<atf:form_text text="数据库名" bind="value: database, valueUpdate: 'afterkeydown'"></atf:form_text>
 		<atf:form_textarea text="查询语句" bind="value: query, valueUpdate: 'afterkeydown'"></atf:form_textarea>
-		<input style="margin-top:15px;font-size: 12px;" value="执行查询语句，生成预期结果" type="button">
+		<input style="margin-top:15px;font-size: 12px;" value="初始化预期结果" data-bind="click: $parent.databaseConfig.query" type="button">
 		<atf:form_textarea text="预期结果" bind="value: text, valueUpdate: 'afterkeydown'"></atf:form_textarea>
 		<!-- /ko -->
 	</div>

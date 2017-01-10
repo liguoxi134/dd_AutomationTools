@@ -197,7 +197,31 @@ testCaseRunViewModel = function() {
 	testCaseRunViewModel.prototype.currentBlade = ko.observable();
 }
 
-inputAndOutputViewModel = function() {
+testConfigRunViewModel = function() {
+	var vm = this;
+	vm.isLoadingData = ko.observable(false);
+	vm.responseData = ko.observable();
+	var postData = {
+		requestBody : $.gs.io.requestBody(),
+		requestHeaders : $.gs.io.requestHeaders(),
+		requestMethod : $.gs.io.requestMethod(),
+		requestUrl : $.gs.io.requestUrl(),
+	};
+	vm.isLoadingData(true);
+	$.post("./io/run", postData, function(data) {
+		if (data) {
+			vm.responseData(data.message);
+		} else {
+			alert("如果看到此提示，请告知开发人员，谢谢");
+		}
+		vm.isLoadingData(false)
+	});
+
+	testConfigRunViewModel.prototype.vm = vm;
+	//to save current balde
+	testConfigRunViewModel.prototype.currentBlade = ko.observable();
+}
+testConfigDetailsViewModel = function() {
 	var vm = this;
 	vm.isLoadingData = ko.observable(false);
 	vm.isSavingData = ko.observable(false);
@@ -351,6 +375,22 @@ inputAndOutputViewModel = function() {
 				}
 				return this.selectedResultType()[0].value;
 			},
+
+			send : function() {
+				var postData = {
+					requestBody : vm.inArgs.requestBody(),
+					requestHeaders : vm.summary.requestHeaders(),
+					requestMethod : vm.summary.requestMethod(),
+					requestUrl : vm.summary.requestUrl(),
+				};
+				$.post("./io/send", postData, function(data) {
+					if (data) {
+						vm.resultVerify.editConfig().text(data.message);
+					} else {
+						alert("如果看到此提示，请告知开发人员，谢谢");
+					}
+				});
+			},
 			model : function() {
 				this.text = ko.observable();
 				this.get = function() {
@@ -415,6 +455,8 @@ inputAndOutputViewModel = function() {
 				return d;
 			},
 			set : function(cnf) {
+				this.config([]);
+				this.selectedResultType([]);
 				if (cnf) {
 					//Set default Return Type
 					this.selectedResultType.removeAll();
@@ -429,10 +471,6 @@ inputAndOutputViewModel = function() {
 						}
 						this.selectedResultType([vm.resultVerify.findResultType(cnf.resultVerify.returnConfig.returnType)]);
 					}
-				//				vm.resultVerify.returnConfig.config.removeAll();
-				//				var demo = new vm.resultVerify.returnConfig.model();
-				//				demo.text("test");
-				//				vm.resultVerify.returnConfig.config.push(demo);
 				}
 			},
 		},
@@ -474,6 +512,20 @@ inputAndOutputViewModel = function() {
 				}
 			},
 			config : ko.observableArray(),
+			query : function() {
+				var postData = {
+					server : JSON.stringify(this.server()[0]),
+					query : this.query(),
+					database : this.database(),
+				};
+				$.post("./io/query", postData, function(data) {
+					if (data) {
+						vm.resultVerify.editConfig().text(data.message);
+					} else {
+						alert("如果看到此提示，请告知开发人员，谢谢");
+					}
+				});
+			},
 			showConfigLayout : function(data, e) {
 				vm.resultVerify.editConfig(data);
 				vm.showEditLayout(data, e);
@@ -531,6 +583,9 @@ inputAndOutputViewModel = function() {
 				return d;
 			},
 			set : function(cnf) {
+				this.verifyServers([]);
+				this.config([]);
+				this.selectedResultType([]);
 				if (cnf) {
 					//Set default Return Type
 					this.selectedResultType.removeAll();
@@ -555,19 +610,6 @@ inputAndOutputViewModel = function() {
 						this.config(vdbs);
 						this.selectedResultType([vm.resultVerify.findResultType(cnf.resultVerify.databaseConfig.returnType)]);
 					}
-				//				vm.resultVerify.databaseConfig.config.removeAll();
-				//				var demo = new vm.resultVerify.databaseConfig.model();
-				//				demo.database("database0");
-				//				demo.server([vm.resultVerify.databaseConfig.verifyServers()[0]]);
-				//				demo.query("Query0");
-				//				demo.text("text0");
-				//				vm.resultVerify.databaseConfig.config.push(demo);
-				//				demo = new vm.resultVerify.databaseConfig.model();
-				//				demo.database("database");
-				//				demo.server([vm.resultVerify.databaseConfig.verifyServers()[1]]);
-				//				demo.query("Query");
-				//				demo.text("text");
-				//				vm.resultVerify.databaseConfig.config.push(demo);
 				}
 			},
 		},
@@ -591,7 +633,6 @@ inputAndOutputViewModel = function() {
 				//Set default Return Type
 				this.selectedResultType.removeAll();
 				this.selectedResultType.push(vm.resultVerify.resultTypes()[2]);
-
 			},
 		},
 		set : function(cnf) {
@@ -628,9 +669,9 @@ inputAndOutputViewModel = function() {
 	vm.closeEditLayout = function() {
 		vm.editLayoutId("");
 	}
-	inputAndOutputViewModel.prototype.vm = vm;
+	testConfigDetailsViewModel.prototype.vm = vm;
 	//to save current balde
-	inputAndOutputViewModel.prototype.currentBlade = ko.observable();
+	testConfigDetailsViewModel.prototype.currentBlade = ko.observable();
 }
 
 jobScheduleViewModel = function() {

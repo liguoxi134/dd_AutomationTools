@@ -41,26 +41,3 @@ Date.prototype.getWeekOfMonth = function(weekStart) {
 	var day = this.getDate();
 	return Math.ceil((day - dayOfWeek - 1) / 7) + ((dayOfWeek >= weekStart) ? 1 : 0);
 };
-
-jQuery.registerRunResult = function() {
-	var target = $(".c-result");
-	var label = $("<label/>");
-	var checkBox = $("<input type=\"checkbox\">");
-	var text = $("<span/>").html("隐藏匹配成功的字段");
-	label.append(checkBox).append(text);
-
-	checkBox.change(function() {
-		if (checkBox.is(':checked')) {
-			target.find(".exact").parents("li").hide();
-			text.html("显示匹配成功的字段");
-		} else {
-			target.find(".exact").parents("li").show();
-			text.html("隐藏匹配成功的字段");
-		}
-	});
-	target.prepend(label);
-
-	$(".result-header", target).click(function() {
-		$(this).next("ul").toggle();
-	});
-};

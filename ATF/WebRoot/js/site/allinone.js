@@ -46,10 +46,16 @@ jQuery.extend({
 		},
 	},
 	io : {
-		io : function() {
-			var vm = new inputAndOutputViewModel();
+		details : function() {
+			var vm = new testConfigDetailsViewModel();
 			vm.init();
-			var blade = $("#ioParameter");
+			var blade = $("#detailsTestConfig");
+			ko.applyBindings(vm, blade[0]);
+		},
+		run:function(){
+			var vm = new testConfigRunViewModel();
+			vm.init();
+			var blade = $("#runTestConfig");
 			ko.applyBindings(vm, blade[0]);
 		}
 	},

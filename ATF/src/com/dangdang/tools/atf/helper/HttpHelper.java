@@ -12,7 +12,7 @@ import java.util.List;
 import com.dangdang.tools.atf.models.LoggerObject;
 
 public class HttpHelper extends LoggerObject {
-	public static String sendGet(String url, String param, List<String> headers) {
+	public static String sendGet(String url, String param, String[] headers) {
 		String result = "";
 		url = url.trim().replaceAll("[\r\n]+?", "");
 		param = param.trim().replaceAll("[\r\n]+?", "");
@@ -59,7 +59,7 @@ public class HttpHelper extends LoggerObject {
 		return result;
 	}
 
-	public static String doPost(String url, String param, List<String> headers) {
+	public static String doPost(String url, String param, String[] headers) {
 		PrintWriter writer = null;
 		String result = "";
 		url = url.replaceAll("[\r\n]+?", "");
