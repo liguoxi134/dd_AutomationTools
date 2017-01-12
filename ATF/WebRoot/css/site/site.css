@@ -45,7 +45,7 @@ select::-ms-expand {
 	align-items:stretch;
 	height:calc(100% - 40px);
 	position:relative;
-	z-index:1;
+	z-index:300;
 }
 .fxs-sidebar {
 	z-index:200;
@@ -464,7 +464,7 @@ a {
 	overflow-x:auto;
 	overflow-y:hidden;
 	transition:margin .2s ease;
-	z-index:1;
+	z-index:300;
 }
 .fxs-panorama {
 	position:relative;
@@ -1715,11 +1715,12 @@ table.run-c-table {
 table.run-c-table th {
 	font-size:120%;
 }
-table.run-c-table th,table.run-c-table td {
-	padding:2px 5px;
-	text-align:left;
-	border-color:rgba(25,80,123,0.5);
-	border-style:solid;
+table.run-c-table th, table.run-c-table td {
+	padding: 2px 5px;
+	text-align: left;
+	border-color: rgba(25,80,123,0.5);
+	border-style: solid;
+	word-wrap: break-word;
 }
 table.run-c-table th {
 	border-width:0 1px 2px 1px;
@@ -1781,7 +1782,7 @@ table.run-c-table td:LAST-CHILD {
 	color:gray;
 }
 .msg-layout,.edit-layout {
-	position:absolute;
+	position:fixed;
 	left:0;
 	top:0;
 	bottom:0;

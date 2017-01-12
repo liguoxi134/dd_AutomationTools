@@ -153,4 +153,10 @@ public class JsonCompareSourceObject extends JsonCompareObject implements ICompa
 		return "";
 	}
 
+	public static void main(String[] args) throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		String content = "{\"id\":[],\"name\":[1,2,3],\"description\":\"drf\"}";
+		JsonNode node = mapper.readTree(content);
+		JsonCompareSourceObject compareItem = new JsonCompareSourceObject(node);
+	}
 }

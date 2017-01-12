@@ -4,10 +4,12 @@
 		vm.refresh();
 		vm.currentBlade().refresh(vm.refresh)
 	}
-	if(vm.subscribe){
+	if (vm.subscribe) {
 		vm.subscribe();
 	}
-	vm.currentBlade().setBladeCommand(vm.getCommands())
+	if (vm.getCommands) {
+		vm.currentBlade().setBladeCommand(vm.getCommands())
+	}
 };
 testInterfaceListViewModel.prototype.init = function() {
 	var vm = testInterfaceListViewModel.prototype.vm;

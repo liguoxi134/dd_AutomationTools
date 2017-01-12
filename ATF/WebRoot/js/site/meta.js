@@ -133,7 +133,50 @@ testCaseRunViewModel = function() {
 	var vm = this;
 	vm.executeArray = ko.observableArray();
 	vm.isLoadingData = ko.observable(false);
+	vm.selectedExecuteItem = ko.observableArray();
+	vm.selectedVerifyType = ko.observableArray();
 	vm.selectedExecuteResult = ko.observableArray();
+
+	//packageItems(["returnConfig", "databaseConfig", "logConfig"], ["接口返回结果", "数据库查询结果", "Log记录文件"])
+	vm.verifyTypes = ko.computed(function() {
+		vm.selectedExecuteResult([]);
+		var _selectedExecuteItem = (vm.selectedExecuteItem() != undefined && vm.selectedExecuteItem().length == 1) ? vm.selectedExecuteItem()[0] : undefined;
+		if (_selectedExecuteItem == undefined) {
+			return [];
+		} else {
+			var data = [];
+			if (_selectedExecuteItem.returnConfig && _selectedExecuteItem.returnConfig.length > 0) {
+				data.push({
+					id : "returnConfig",
+					value : "接口返回结果"
+				});
+			}
+			if (_selectedExecuteItem.databaseConfig && _selectedExecuteItem.databaseConfig.length > 0) {
+				data.push({
+					id : "databaseConfig",
+					value : "数据库查询结果"
+				});
+			}
+			if (_selectedExecuteItem.logConfig && _selectedExecuteItem.logConfig.length > 0) {
+				data.push({
+					id : "logConfig",
+					value : "Log记录文件"
+				});
+			}
+			return data;
+		}
+	});
+
+	vm.selectedExecuteResults = ko.computed(function() {
+		vm.selectedExecuteResult([]);
+		var _selectedExecuteItem = (vm.selectedExecuteItem() != undefined && vm.selectedExecuteItem().length == 1) ? vm.selectedExecuteItem()[0] : undefined;
+		var _selectedVerifyType = vm.selectedVerifyType() != undefined && vm.selectedVerifyType().length == 1 ? vm.selectedVerifyType()[0] : undefined;
+		if (_selectedExecuteItem == undefined || _selectedVerifyType == undefined) {
+			return [];
+		} else {
+			return eval("_selectedExecuteItem." + _selectedVerifyType.id);
+		}
+	});
 
 	vm.visible = {
 		expectResult : ko.observable(true),
@@ -157,6 +200,17 @@ testCaseRunViewModel = function() {
 		}
 	});
 
+	function packageItems(ids, names) {
+		var items = [];
+		var length = Math.min(ids.length, names.length);
+		for (var plIdx = 0; plIdx < length; plIdx++) {
+			items.push({
+				id : ids[plIdx],
+				value : names[plIdx]
+			});
+		}
+		return items;
+	}
 	function buildJsonTree(executeResult) {
 		if (executeResult.source == "") {
 			executeResult.source = "{}";

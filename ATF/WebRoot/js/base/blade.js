@@ -32,7 +32,7 @@ Blade = function(options) {
 
 	_registEvents = function() {
 		blade.mousedown(function(e) {
-			if (e.which == 3) {
+			if (e.which == 3&&!$(".edit-layout").is(":visible")) {
 				$(document).off();
 				var ex = e || window.event;
 				var txt = ex.target.innerText;

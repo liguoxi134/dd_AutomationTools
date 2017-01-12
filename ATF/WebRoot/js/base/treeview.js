@@ -42,8 +42,8 @@
 			if ((typeof data) == 'object' && data != null) {
 				if (data instanceof Array) {
 					if (data.length > 0) {
-						group++;
 						for (var i = 0; i < data.length; i++) {
+							group++;
 							var value = data[i];
 							var node = _createNode("[" + i + "]");
 							root.append(node);

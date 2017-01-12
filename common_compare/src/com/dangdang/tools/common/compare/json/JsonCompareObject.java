@@ -10,24 +10,34 @@ public abstract class JsonCompareObject {
 	private int group = 0;
 
 	void calcAll(JsonNode root, String pref, String key) {
-		if (root.isArray() && root.isContainerNode()) {
-			// array has more nodes
-			pref += key + "*";
-			for (JsonNode _sub : root) {
-				group++;
-				calcAll(_sub, pref, "");
+		if (root.isContainerNode()) {
+			if (root.isArray()) {
+				// array has more nodes
+				pref += key + "*";
+				if (root.size() > 0) {
+					for (JsonNode _sub : root) {
+						group++;
+						calcAll(_sub, pref, "");
+					}
+				} else {
+					addItem(root, pref, group);
+				}
+				return;
+			} else if (root.isObject()) {
+				// object not null
+				pref += key + "$";
+				Iterator<Entry<String, JsonNode>> fields = root.fields();
+				if (root.size() > 0) {
+					group++;
+					while (fields.hasNext()) {
+						Entry<String, JsonNode> entry = fields.next();
+						calcAll(entry.getValue(), pref, entry.getKey());
+					}
+				} else {
+					addItem(root, pref, group);
+				}
+				return;
 			}
-			return;
-		} else if (root.isObject() && root.isContainerNode()) {
-			// object not null
-			pref += key + "$";
-			Iterator<Entry<String, JsonNode>> fields = root.fields();
-			group++;
-			while (fields.hasNext()) {
-				Entry<String, JsonNode> entry = fields.next();
-				calcAll(entry.getValue(), pref, entry.getKey());
-			}
-			return;
 		} else {
 			// null,number,string
 			String path = pref + key;

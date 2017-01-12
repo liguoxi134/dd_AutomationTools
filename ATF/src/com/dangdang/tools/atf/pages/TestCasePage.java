@@ -4,9 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +15,12 @@ import com.dangdang.tools.atf.entity.TestInterface;
 import com.dangdang.tools.atf.entityenum.TestInterfaceType;
 import com.dangdang.tools.atf.factory.DataFactory;
 import com.dangdang.tools.atf.helper.HttpHelper;
+import com.dangdang.tools.atf.helper.MySqlHelper;
+import com.dangdang.tools.atf.models.VerifyDatabaseConfig;
 import com.dangdang.tools.common.compare.IComparer;
+import com.dangdang.tools.common.compare.json.JsonComparer;
+import com.dangdang.tools.common.compare.text.TextComparer;
+import com.dangdang.tools.common.compare.xml.XmlComparer;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -106,16 +109,6 @@ public class TestCasePage extends BasePage {
 	public static void Execute(HttpServletRequest request, HttpServletResponse response) {
 		DEBUG("TestCasePage.Execute()");
 		ObjectMapper mapper = new ObjectMapper();
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JsonGenerator generator = null;
-		try {
-			DEBUG("TestCasePage.Execute()： Create JSON Generator, Encode:" + JsonEncoding.UTF8);
-			generator = mapper.getFactory().createGenerator(out, JsonEncoding.UTF8);
-			generator.writeStartArray();
-		} catch (IOException ex) {
-			ERROR("TestCasePage.Execute(): Cannot create JSON Generator, Exception Message: " + ex.getMessage());
-			writeMessage(response, "出现异常：" + ex.getMessage(), false);
-		}
 		String testSystemId = "";
 		String[] ids = null;
 		try {
@@ -127,8 +120,16 @@ public class TestCasePage extends BasePage {
 			ids = new String[0];
 			ERROR("TestCasePage.Execute(): Cannot some of parameters, Exception Message: " + e.getMessage());
 		}
-		IComparer compare = null;
-		Map<String, Object> map = new HashMap<String, Object>();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		JsonGenerator generator = null;
+		try {
+			DEBUG("TestCasePage.Execute()： Create JSON Generator, Encode:" + JsonEncoding.UTF8);
+			generator = mapper.getFactory().createGenerator(out, JsonEncoding.UTF8);
+			generator.writeStartArray();// [
+		} catch (IOException ex) {
+			ERROR("TestCasePage.Execute(): Cannot create JSON Generator, Exception Message: " + ex.getMessage());
+			writeMessage(response, "出现异常：" + ex.getMessage(), false);
+		}
 		for (String id : ids) {
 			if (id.trim().isEmpty()) {
 				WARN("TestCasePage.Execute(): Test Case Id is empty, skip execute!");
@@ -157,9 +158,9 @@ public class TestCasePage extends BasePage {
 			}
 			String real = "";
 			if (testInterface.getType() == TestInterfaceType.POST) {
-				real = HttpHelper.doPost(testInterface.getUrl(), testConfig.getRequestBody(), headerList);
+				real = HttpHelper.doPost(testInterface.getUrl(), testConfig.getRequestBody(), headerList.toArray(new String[0]));
 			} else if (testInterface.getType() == TestInterfaceType.GET) {
-				real = HttpHelper.sendGet(testInterface.getUrl(), testConfig.getRequestBody(), headerList);
+				real = HttpHelper.sendGet(testInterface.getUrl(), testConfig.getRequestBody(), headerList.toArray(new String[0]));
 			}
 			JsonNode configNode = null;
 			try {
@@ -167,9 +168,130 @@ public class TestCasePage extends BasePage {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			configNode.findPath("");
+			try {
+				generator.writeStartObject();// {
+				generator.writeObjectField("testCase", testCase);// testCase:{}
+				generator.writeObjectField("testInterface", testInterface);// testInterface:{}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			executeConfig(configNode, "returnConfig", generator, real);
+			executeConfig(configNode, "databaseConfig", generator, real);
+			executeConfig(configNode, "logConfig", generator, real);
+			try {
+				generator.writeEndObject();// }
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		setContentType(response, ContentType.Json);
+		try {
+			generator.writeEndArray();// ]
+			generator.flush();
+			out.flush();
+			String result = new String(out.toByteArray(), "UTF-8");
+			out.close();
+			generator.close();
+			System.out.println(result);
+			writeMessage(response, result, true);
+		} catch (IOException e) {
+			writeMessage(response, e.getMessage(), false);
 		}
 	}
+
+	private static void executeConfig(JsonNode configNode, String verifyConfigNodeName, JsonGenerator generator, String apiResponseData) {
+		IComparer compare = null;
+		String returnTypeNodeName = "returnType";
+		String returnResultNodeName = "returnResult";
+		JsonNode verifyConfigNode = configNode != null && configNode.has(verifyConfigNodeName) ? configNode.get(verifyConfigNodeName) : null;
+		String expectReturnTypeNode = configNode != null && configNode.has(returnTypeNodeName) ? configNode.get(returnTypeNodeName).textValue() : "JSON";
+		JsonNode returnResultNodeList = verifyConfigNode != null && verifyConfigNode.has(returnResultNodeName) ? verifyConfigNode.get(returnResultNodeName) : null;
+
+		int resultCount = returnResultNodeList != null && returnResultNodeList.isArray() ? returnResultNodeList.size() : 0;
+		try {
+			generator.writeArrayFieldStart(verifyConfigNodeName);// verifyConfigNodeName:[
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		for (int i = 0; i < resultCount; i++) {
+			JsonNode returnResultNode = returnResultNodeList.get(i);
+			String expectReturnResult = returnResultNode != null && returnResultNode.has("text") ? returnResultNode.get("text").textValue() : "";
+
+			String realReturnResult = "";
+
+			switch (verifyConfigNodeName) {
+			case "returnConfig":
+				realReturnResult = apiResponseData;
+				break;
+			case "databaseConfig":
+				JsonNode serverNode = returnResultNode.get("server");
+				String ip = serverNode.get("ip").textValue();
+				String uid = serverNode.get("uid").textValue();
+				String pwd = serverNode.get("pwd").textValue();
+				String port = serverNode.get("port").textValue();
+				String type = serverNode.get("type").textValue();
+				String name = serverNode.get("name").textValue();
+
+				List<VerifyDatabaseConfig> vdbList = DataFactory.getVerifyDatabaseConfigs();
+				VerifyDatabaseConfig server = null;
+				for (VerifyDatabaseConfig config : vdbList) {
+					if (config.getName().equalsIgnoreCase(name)) {
+						server = config;
+						break;
+					}
+				}
+				if (server == null) {
+					server = new VerifyDatabaseConfig();
+					server.setIp(ip);
+					server.setName(name);
+					server.setPort(port);
+					server.setPwd(pwd);
+					server.setType(type);
+					server.setUid(uid);
+				}
+				String database = returnResultNode.get("database").textValue();
+				String sql = returnResultNode.get("query").textValue();
+				try {
+					realReturnResult = MySqlHelper.executeQuery(server.getBaseConnectionString() + database, sql, server.getProperties());
+				} catch (Exception ex) {
+					realReturnResult = ex.getMessage();
+				}
+				break;
+
+			default:
+				break;
+			}
+
+			if (expectReturnTypeNode.equalsIgnoreCase("JSON")) {
+				compare = new JsonComparer();
+			} else if (expectReturnTypeNode.equalsIgnoreCase("XML")) {
+				compare = new XmlComparer();
+			} else {
+				compare = new TextComparer();
+			}
+			try {
+				generator.writeStartObject();// {
+				generator.writeObjectField("name", "比较结果 - " + (i + 1));
+				generator.writeObjectField("source", expectReturnResult);// source:""
+				generator.writeObjectField("target", realReturnResult);// target:""
+				String compareResult = compare.compare(expectReturnResult, realReturnResult);
+				generator.writeObjectField("compare", compareResult);// compare:""
+				generator.writeEndObject();// }
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		try {
+			generator.writeEndArray();// ]
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	//
 	// if (testInterface.getType() == TestInterfaceType.POST) {
 	// DEBUG("TestCasePage.Execute()： test interface type: " +

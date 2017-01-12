@@ -63,7 +63,7 @@ jQuery.ensureElementIntoView = function(blade) {
 jQuery.closeAllBlades = function() {
 	$('.fxs-journey-layout').children().remove();
 };
-
+//jQuery==$
 (function($) {
 	$.fn.setBladeHtml = function(html) {
 		$('div.fxs-blade-content.fxs-pannable', this).html(html);

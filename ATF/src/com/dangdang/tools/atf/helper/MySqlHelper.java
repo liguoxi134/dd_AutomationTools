@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,8 +53,8 @@ public class MySqlHelper {
 		return cols;
 	}
 
-	public static String executeQuery(String connStr, String sql) throws Exception {
-		Connection connection = DriverManager.getConnection(connStr);
+	public static String executeQuery(String connStr, String sql, Properties info) throws Exception {
+		Connection connection = DriverManager.getConnection(connStr, info);
 		CallableStatement call = connection.prepareCall(sql);
 		boolean hasResultSet = call.execute();
 		ObjectMapper map = new ObjectMapper();
@@ -92,7 +93,7 @@ public class MySqlHelper {
 	public static void main(String[] args) throws Exception {
 		String connStr = "jdbc:mysql://10.255.242.58:3306?useUnicode=true&characterEncoding=UTF-8&user=atf_root&password=Pa$$word~1234";
 		String sql = "select * from atf_log.log limit 10;";
-		executeQuery(connStr, sql);
+		//executeQuery(connStr, sql);
 		// String connStr =
 		// "jdbc:mysql://10.255.242.58:3306?useUnicode=true&characterEncoding=UTF-8&user=atf_root&password=Pa$$word~1234";
 		// String sql = "select * from atf_log.log limit 10;";

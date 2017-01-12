@@ -8,22 +8,18 @@
 	<div class="run-summary">
 		<div style="width: 100%;display: flex;align-items: center;">
 			<label style="padding: 0 10px; white-space: nowrap;">
-				<small>选择用例</small>
+				<small style="white-space: nowrap;">测试用例</small>
 			</label>
-			<select style="width:100%;" data-bind="options: executeArray,selectedOptions:selectedExecuteResult,optionsText:function(item){return item.testcase.name;}"></select>
+			<select style="width:100%;" data-bind="options: executeArray, selectedOptions: selectedExecuteItem, optionsText:function(item){return item.testCase.name;},optionsCaption: '选择...',disable:executeArray==undefined||executeArray().length==0"></select>
+			<label style="padding: 0 10px; white-space: nowrap;">
+				<small style="white-space: nowrap;">结果类型</small>
+			</label>
+			<select style="width:100%;" data-bind="options: verifyTypes, selectedOptions: selectedVerifyType, optionsText:'value',optionsCaption: '选择...',disable:verifyTypes==undefined||verifyTypes().length==0"></select>
+			<label style="padding: 0 10px; white-space: nowrap;">
+				<small style="white-space: nowrap;">比较结果</small>
+			</label>
+			<select style="width:100%;" data-bind="options: selectedExecuteResults, selectedOptions: selectedExecuteResult, optionsText:function(item){return item.name;},optionsCaption: '选择...',disable:selectedExecuteResults==undefined||selectedExecuteResults().length==0"></select>
 		</div>
-		<label>
-			<input type="checkbox" data-bind="checked: visible.successItem" />
-			<small>显示匹配成功的字段</small>
-		</label>
-		<label>
-			<input type="checkbox" data-bind="checked: visible.failItem" />
-			<small>显示匹配失败的字段</small>
-		</label>
-		<label>
-			<input type="checkbox" data-bind="checked: visible.missItem" />
-			<small>显示匹配缺失的字段</small>
-		</label>
 	</div>
 	<div class="run-details">
 		<div style="width: 20%; margin-right: 10px;" class="run" data-bind="visible:visible.expectResult()">
@@ -31,14 +27,26 @@
 			<div class="er run-content"></div>
 		</div>
 		<div style="width: 100%;" class="run">
-			<div class="run-header">
+			<div class="run-header" style="height: 4rem;">
 				<span>比较结果</span>
 				<small class="all">匹配总数：</small>
 				<small class="succ">成功：</small>
 				<small class="fail">失败：</small>
-				<small class="miss">缺失：</small>
+				<small class="miss">缺失：</small><br/>
+				<label style="white-space: nowrap;">
+					<input type="checkbox" data-bind="checked: visible.successItem" />
+					<small style="white-space: nowrap;">显示匹配成功的字段</small>
+				</label>
+				<label style="white-space: nowrap;">
+					<input type="checkbox" data-bind="checked: visible.failItem" />
+					<small style="white-space: nowrap;">显示匹配失败的字段</small>
+				</label>
+				<label style="white-space: nowrap;">
+					<input type="checkbox" data-bind="checked: visible.missItem" />
+					<small style="white-space: nowrap;">显示匹配缺失的字段</small>
+				</label>
 			</div>
-			<div class="run-content">
+			<div class="run-content" style="height: calc(100% - 2px - 4rem);">
 				<table class="run-c-table">
 					<thead>
 						<tr>
@@ -72,4 +80,6 @@
 		</div>
 	</div>
 	<!-- /ko -->
-</div><script>$.registVM();</script>
+</div>
+<script>$.registVM();
+</script>

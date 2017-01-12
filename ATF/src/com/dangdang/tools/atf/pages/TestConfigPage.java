@@ -153,19 +153,35 @@ public class TestConfigPage extends BasePage {
 	public static void Query(HttpServletRequest request, HttpServletResponse response) {
 		String responseData = null;
 		try {
-			String server = getString(request, "server");
 			String database = getString(request, "database");
 			ObjectMapper map = new ObjectMapper();
-			JsonNode serverNode = map.readTree(server);
-
-			String serverType = serverNode.get("type").textValue().toLowerCase();
+			JsonNode serverNode = map.readTree(getString(request, "server"));
 			String ip = serverNode.get("ip").textValue();
-			String port = serverNode.get("port").textValue();
-			String user = serverNode.get("uid").textValue();
+			String uid = serverNode.get("uid").textValue();
 			String pwd = serverNode.get("pwd").textValue();
-			String connStr = "jdbc:" + serverType + "://" + ip + ":" + port + "/" + database + "?user=" + user + "&password=" + pwd;
+			String port = serverNode.get("port").textValue();
+			String type = serverNode.get("type").textValue();
+			String name = serverNode.get("name").textValue();
+
+			List<VerifyDatabaseConfig> vdbList = DataFactory.getVerifyDatabaseConfigs();
+			VerifyDatabaseConfig server = null;
+			for (VerifyDatabaseConfig config : vdbList) {
+				if (config.getName().equalsIgnoreCase(name)) {
+					server = config;
+					break;
+				}
+			}
+			if (server == null) {
+				server = new VerifyDatabaseConfig();
+				server.setIp(ip);
+				server.setName(name);
+				server.setPort(port);
+				server.setPwd(pwd);
+				server.setType(type);
+				server.setUid(uid);
+			}
 			String sql = getString(request, "query");
-			responseData = MySqlHelper.executeQuery(connStr, sql);
+			responseData = MySqlHelper.executeQuery(server.getBaseConnectionString() + database, sql, server.getProperties());
 			writeMessage(response, responseData, true);
 		} catch (Exception e) {
 			responseData = e.getMessage();

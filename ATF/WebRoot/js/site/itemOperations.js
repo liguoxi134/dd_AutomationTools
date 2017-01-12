@@ -58,7 +58,7 @@ testCaseListViewModel.prototype.itemEditClick = function(data) {
 
 
 //execute when user click each test interface item from list
-testInterfaceListViewModel.prototype.itemClick = function(data) {
+testInterfaceListViewModel.prototype.itemClick = function(data) { 
 	var vm = testInterfaceListViewModel.prototype.vm;
 	//close next all blades
 	vm.currentBlade().closeNextAllBlades();
@@ -96,26 +96,32 @@ testCaseRunViewModel.prototype.itemClick = function(data, obj) {
 	var vm = testCaseRunViewModel.prototype.vm;
 	//_navExpectResultItem
 	if (vm.visible.expectResult()) {
-		var nodeName = vm.getTokenFieldName(data);
+		var nodeName = vm.getTokenFieldName(data) || data.node;
 		var group = "[data-group='" + data.group + "']";
 		var value = "[data-value='" + (data.node == null ? "null" : data.node) + "']";
 		var node = "[data-node='" + nodeName + "']";
-		var node = $(".er " + group + node + value);
-		node.parents(".node").removeClass("collapsed");
-		node.click();
-		node.get(0).scrollIntoView(true);
+		var ernode = $(".er " + group + node + value);
+		if (ernode.length > 0) {
+			ernode.parents(".node").removeClass("collapsed");
+			ernode.click();
+			ernode.get(0).scrollIntoView(true);
+		} else {
+			alert(ernode.length)
+		}
 	}
 	//_navRealResultItem
 	if (vm.visible.realResult()) {
 		if (data.state != "Miss") {
-			var nodeName = vm.getTokenFieldName(data);
+			var nodeName = vm.getTokenFieldName(data)||data.realNode;
 			var group = "[data-group='" + data.realGroup + "']";
 			var value = "[data-value='" + (data.realNode == null ? "null" : data.realNode) + "']";
 			var node = "[data-node='" + nodeName + "']";
-			var node = $(".rr " + group + node + value);
-			node.parents(".node").removeClass("collapsed");
-			node.click();
-			node.get(0).scrollIntoView(true);
+			var rrnode = $(".rr " + group + node + value);
+			if (rrnode.length > 0) {
+				rrnode.parents(".node").removeClass("collapsed");
+				rrnode.click();
+				rrnode.get(0).scrollIntoView(true);
+			}
 		} else {
 			$(".rr .active").removeClass("active");
 		}
@@ -225,7 +231,7 @@ testConfigDetailsViewModel.prototype.refresh = function() {
 				});
 				vm.resultVerify.set({
 					resultVerify : JSON.parse(data.resultVerify),
-					verifyDbs:data.verifyDbs
+					verifyDbs : data.verifyDbs
 				});
 			} else {
 				alert(data.message);

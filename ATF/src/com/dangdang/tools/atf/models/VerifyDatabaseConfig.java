@@ -1,6 +1,7 @@
 package com.dangdang.tools.atf.models;
 
 import java.util.List;
+import java.util.Properties;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,6 +61,26 @@ public class VerifyDatabaseConfig {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getBaseConnectionString() {
+		StringBuffer sb = new StringBuffer();
+		sb = sb.append("jdbc:").append(this.type.toLowerCase()).append("://").append(this.ip).append(this.port != null && !this.port.isEmpty() ? ":" + this.port : "").append("/");
+		return sb.toString();
+	}
+
+	public Properties getProperties() {
+		Properties info = new Properties();
+		info.put("user", this.uid);
+		info.put("password", this.pwd);
+		if (this.more != null && !this.more.isEmpty()) {
+			String[] kvpList = more.split("&");
+			for (String kvp : kvpList) {
+				String[] kv = kvp.split("=", 2);
+				info.put(kv[0], kv.length == 2 ? kv[1] : "");
+			}
+		}
+		return info;
 	}
 
 	public String toJson() {
