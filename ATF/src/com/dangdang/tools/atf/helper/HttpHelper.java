@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
 
 import com.dangdang.tools.atf.models.LoggerObject;
 
@@ -16,20 +15,19 @@ public class HttpHelper extends LoggerObject {
 		String result = "";
 		url = url.trim().replaceAll("[\r\n]+?", "");
 		param = param.trim().replaceAll("[\r\n]+?", "");
-		param = param.startsWith("?") ? param.substring(1) : param;
 		String urlNameString = "";
-		int idx1 = url.indexOf("?");
-		int idx2 = url.lastIndexOf("?");
-
-		if (idx1 != -1) {
-			if (idx1 == idx2) {
-				urlNameString = url + "&" + param;
+		if (url.contains("?")) {
+			if (param.contains("?")) {
+				return "URL异常：请不要再接口和输入参数信息中都加入'?'";
 			} else {
-				return "接口地址不正确";
+				urlNameString = url + param;
 			}
+		} else if (param.contains("?")) {
+			urlNameString = url + param;
 		} else {
 			urlNameString = url + "?" + param;
 		}
+		urlNameString = urlNameString.endsWith("?") ? urlNameString.substring(0, urlNameString.length() - 1) : urlNameString;
 		URL realUrl = null;
 		try {
 			realUrl = new URL(urlNameString);
