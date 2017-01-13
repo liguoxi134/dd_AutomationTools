@@ -91,8 +91,8 @@ public class MySqlHelper {
 
 	// SELECT SCHEMA_NAME FROM information_schema.SCHEMATA
 	public static void main(String[] args) throws Exception {
-		String connStr = "jdbc:mysql://10.255.242.58:3306?useUnicode=true&characterEncoding=UTF-8&user=atf_root&password=Pa$$word~1234";
-		String sql = "select * from atf_log.log limit 10;";
+//		String connStr = "jdbc:mysql://10.255.242.58:3306?useUnicode=true&characterEncoding=UTF-8&user=atf_root&password=Pa$$word~1234";
+//		String sql = "select * from atf_log.log limit 10;";
 		//executeQuery(connStr, sql);
 		// String connStr =
 		// "jdbc:mysql://10.255.242.58:3306?useUnicode=true&characterEncoding=UTF-8&user=atf_root&password=Pa$$word~1234";

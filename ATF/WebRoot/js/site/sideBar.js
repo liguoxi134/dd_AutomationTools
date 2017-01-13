@@ -11,10 +11,12 @@
 		if (ele.hasClass("fxs-sidebar-flyout-is-hidden")) {
 			ele.removeClass("fxs-sidebar-flyout-is-hidden");
 			ele.addClass("fxs-sidebar-browse-shown fxs-sidebar-flyout-is-open");
+			$(".fxs-portal-content").hide();
 		} else {
 			ele.addClass("fxs-sidebar-flyout-is-hidden");
 			ele.removeClass("fxs-sidebar-browse-shown");
 			ele.removeClass("fxs-sidebar-flyout-is-open");
+			$(".fxs-portal-content").show();
 		}
 	};
 	_self.systemArray = ko.observableArray();

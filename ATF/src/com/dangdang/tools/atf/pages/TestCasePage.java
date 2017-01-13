@@ -148,7 +148,8 @@ public class TestCasePage extends BasePage {
 			try {
 				headerNodes = mapper.readTree(headers);
 			} catch (Exception e) {
-				e.printStackTrace();
+				headerNodes = null;
+				ERROR("Map request Header Exception: " + e.getMessage());
 			}
 			List<String> headerList = new ArrayList<String>();
 			if (headerNodes != null && headerNodes.isArray()) {
@@ -166,24 +167,50 @@ public class TestCasePage extends BasePage {
 			try {
 				configNode = mapper.readTree(testConfig.getResultVerify());
 			} catch (Exception e) {
-				e.printStackTrace();
+				configNode = null;
+				ERROR("Map Result Verify Exception: " + e.getMessage());
 			}
 			try {
 				generator.writeStartObject();// {
 				generator.writeObjectField("testCase", testCase);// testCase:{}
 				generator.writeObjectField("testInterface", testInterface);// testInterface:{}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try {
+					if (generator != null) {
+						generator.close();
+					}
+					if (out != null) {
+						out.close();
+					}
+				} catch (IOException ex) {
+					ERROR("Close json generator Exception: " + ex.getMessage());
+				}
+				ERROR("Map test case and test interface Exception: " + e.getMessage());
+				writeMessage(response, e.getMessage(), false);
 			}
-			executeConfig(configNode, "returnConfig", generator, real);
-			executeConfig(configNode, "databaseConfig", generator, real);
-			executeConfig(configNode, "logConfig", generator, real);
+			try {
+				executeConfig(configNode, "returnConfig", generator, real);
+			} catch (Exception e) {
+				ERROR("Map returnConfig Exception: " + e.getMessage());
+				writeMessage(response, e.getMessage(), false);
+			}
+			try {
+				executeConfig(configNode, "databaseConfig", generator, real);
+			} catch (Exception e) {
+				ERROR("Map databaseConfig Exception: " + e.getMessage());
+				writeMessage(response, e.getMessage(), false);
+			}
+			try {
+				executeConfig(configNode, "logConfig", generator, real);
+			} catch (Exception e) {
+				ERROR("Map logConfig Exception: " + e.getMessage());
+				writeMessage(response, e.getMessage(), false);
+			}
 			try {
 				generator.writeEndObject();// }
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ERROR("Write end object Exception: " + e.getMessage());
+				writeMessage(response, e.getMessage(), false);
 			}
 		}
 		setContentType(response, ContentType.Json);
@@ -201,7 +228,7 @@ public class TestCasePage extends BasePage {
 		}
 	}
 
-	private static void executeConfig(JsonNode configNode, String verifyConfigNodeName, JsonGenerator generator, String apiResponseData) {
+	private static void executeConfig(JsonNode configNode, String verifyConfigNodeName, JsonGenerator generator, String apiResponseData) throws Exception {
 		IComparer compare = null;
 		String returnTypeNodeName = "returnType";
 		String returnResultNodeName = "returnResult";
@@ -210,12 +237,7 @@ public class TestCasePage extends BasePage {
 		JsonNode returnResultNodeList = verifyConfigNode != null && verifyConfigNode.has(returnResultNodeName) ? verifyConfigNode.get(returnResultNodeName) : null;
 
 		int resultCount = returnResultNodeList != null && returnResultNodeList.isArray() ? returnResultNodeList.size() : 0;
-		try {
-			generator.writeArrayFieldStart(verifyConfigNodeName);// verifyConfigNodeName:[
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		generator.writeArrayFieldStart(verifyConfigNodeName);// verifyConfigNodeName:[
 		for (int i = 0; i < resultCount; i++) {
 			JsonNode returnResultNode = returnResultNodeList.get(i);
 			String expectReturnResult = returnResultNode != null && returnResultNode.has("text") ? returnResultNode.get("text").textValue() : "";
@@ -254,11 +276,7 @@ public class TestCasePage extends BasePage {
 				}
 				String database = returnResultNode.get("database").textValue();
 				String sql = returnResultNode.get("query").textValue();
-				try {
-					realReturnResult = MySqlHelper.executeQuery(server.getBaseConnectionString() + database, sql, server.getProperties());
-				} catch (Exception ex) {
-					realReturnResult = ex.getMessage();
-				}
+				realReturnResult = MySqlHelper.executeQuery(server.getBaseConnectionString() + database, sql, server.getProperties());
 				break;
 
 			default:
@@ -272,149 +290,16 @@ public class TestCasePage extends BasePage {
 			} else {
 				compare = new TextComparer();
 			}
-			try {
-				generator.writeStartObject();// {
-				generator.writeObjectField("name", "比较结果 - " + (i + 1));
-				generator.writeObjectField("source", expectReturnResult);// source:""
-				generator.writeObjectField("target", realReturnResult);// target:""
-				String compareResult = compare.compare(expectReturnResult, realReturnResult);
-				generator.writeObjectField("compare", compareResult);// compare:""
-				generator.writeEndObject();// }
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+			generator.writeStartObject();// {
+			generator.writeObjectField("name", "比较结果 - " + (i + 1));
+			generator.writeObjectField("source", expectReturnResult);// source:""
+			generator.writeObjectField("target", realReturnResult);// target:""
+			String compareResult = compare.compare(expectReturnResult, realReturnResult);
+			generator.writeObjectField("compare", compareResult);// compare:""
+			generator.writeEndObject();// }
 		}
-		try {
-			generator.writeEndArray();// ]
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		generator.writeEndArray();// ]
 	}
-
-	//
-	// if (testInterface.getType() == TestInterfaceType.POST) {
-	// DEBUG("TestCasePage.Execute()： test interface type: " +
-	// testInterface.getType());
-	// DEBUG("TestCasePage.Execute()： Parameter type: " + testConfig.getType());
-	// try {
-	// DEBUG("TestCasePage.Execute()： Start send post request...");
-	// String real = HttpHelper.doPost(testInterface.getUrl(),
-	// testConfig.getValue(), testConfig.getType());
-	// String expect = "";
-	// if (expectResult.getVerifyType() == ExpectResultVerifyType.RETURN) {
-	// DEBUG("TestCasePage.Execute()： Expect result verify type: " +
-	// expectResult.getVerifyType());
-	// expect = expectResult.getValue();
-	// } else {
-	// ERROR("TestCasePage.Execute(): Expect result verify type error:
-	// 仅支持URL返回结果的用例");
-	// throw new Exception("仅支持URL返回结果的用例");
-	// }
-	// if (expectResult.getType() == ExpectResultType.JSON) {
-	// DEBUG("TestCasePage.Execute()： Expect result type: " +
-	// expectResult.getType());
-	// compare = new JsonComparer();
-	// String result = compare.compare(expect, real);
-	// map.put("testcase", testCase);
-	// map.put("testinterface", testInterface);
-	// map.put("source", expect);
-	// map.put("target", real);
-	// map.put("compare", result);
-	// generator.writeObject(map);
-	// } else {
-	// ERROR("TestCasePage.Execute(): Expect result type error:
-	// 仅支持比较预期结果类型是JSON格式的用例");
-	// throw new Exception("仅支持比较预期结果类型是JSON格式的用例");
-	// }
-	// } catch (Exception e) {
-	// ERROR("TestCasePage.Execute(): Execute test case failed: " +
-	// testCase.toJson() + "\r\nException Message: " + e.getMessage());
-	// try {
-	// map.put("testcase", testCase);
-	// map.put("testinterface", testInterface);
-	// map.put("source", null);
-	// map.put("target", null);
-	// map.put("compare", e.getMessage());
-	// generator.writeObject(map);
-	// } catch (Exception ex) {
-	// ERROR("TestCasePage.Execute(): Package return map failed, Exception
-	// Message: " + ex.getMessage());
-	// }
-	// }
-	// } else if (testInterface.getType() == TestInterfaceType.GET) {
-	// DEBUG("TestCasePage.Execute()： Parameter type: " + testConfig.getType());
-	// try {
-	// DEBUG("TestCasePage.Execute()： Start send get request...");
-	// String real = HttpHelper.sendGet(testInterface.getUrl(),
-	// testConfig.getValue());
-	// String expect = "";
-	// if (expectResult.getVerifyType() == ExpectResultVerifyType.RETURN) {
-	// DEBUG("TestCasePage.Execute()： Expect result verify type: " +
-	// expectResult.getVerifyType());
-	// expect = expectResult.getValue();
-	// } else {
-	// ERROR("TestCasePage.Execute(): Expect result verify type error:
-	// 仅支持URL返回结果的用例");
-	// throw new Exception("仅支持URL返回结果的用例");
-	// }
-	// if (expectResult.getType() == ExpectResultType.JSON) {
-	// DEBUG("TestCasePage.Execute()： Expect result type: " +
-	// expectResult.getType());
-	// compare = new JsonComparer();
-	// map.put("testcase", testCase);
-	// map.put("testinterface", testInterface);
-	// map.put("source", expect);
-	// map.put("target", real);
-	// String result = compare.compare(expect, real);
-	// map.put("compare", result);
-	// generator.writeObject(map);
-	// } else {
-	// ERROR("TestCasePage.Execute(): Expect result type error:
-	// 仅支持比较预期结果类型是JSON格式的用例");
-	// throw new Exception("仅支持比较预期结果类型是JSON格式的用例");
-	// }
-	// } catch (Exception e) {
-	// ERROR("TestCasePage.Execute(): Execute test case failed: " +
-	// testCase.toJson() + "\r\nException Message: " + e.getMessage());
-	// try {
-	// if (!map.containsKey("testcase")) {
-	// map.put("testcase", testCase);
-	// }
-	// if (!map.containsKey("testinterface")) {
-	// map.put("testinterface", testInterface);
-	// }
-	// if (!map.containsKey("source")) {
-	// map.put("source", null);
-	// }
-	// if (!map.containsKey("target")) {
-	// map.put("target", null);
-	// }
-	// if (!map.containsKey("compare")) {
-	// map.put("compare", e.getMessage());
-	// }
-	// generator.writeObject(map);
-	// } catch (Exception ex) {
-	// ERROR("TestCasePage.Execute(): Package return map failed, Exception
-	// Message: " + ex.getMessage());
-	// writeMessage(response, "出现异常：" + e.getMessage(), false);
-	// }
-	// }
-	// }
-	// }
-	// try {
-	// generator.writeEndArray();
-	// generator.flush();
-	// byte bs[] = out.toByteArray();
-	// generator.close();
-	// out.close();
-	// writeMessage(response, new String(bs, "UTF-8"), true);
-	// } catch (Exception e) {
-	// ERROR("TestCasePage.Execute(): Generate JSON String failed, Exception
-	// Message: " + e.getMessage());
-	// writeMessage(response, "出现异常：" + e.getMessage(), false);
-	// }
-	// }
 
 	// Path: /Refresh
 	public static void Refresh(HttpServletRequest request, HttpServletResponse response) {

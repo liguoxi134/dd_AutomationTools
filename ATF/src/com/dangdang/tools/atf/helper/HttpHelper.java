@@ -12,6 +12,12 @@ import com.dangdang.tools.atf.models.LoggerObject;
 
 public class HttpHelper extends LoggerObject {
 	public static String sendGet(String url, String param, String[] headers) {
+		if (headers == null) {
+			headers = new String[0];
+		}
+		if (param == null) {
+			param = "";
+		}
 		String result = "";
 		url = url.trim().replaceAll("[\r\n]+?", "");
 		param = param.trim().replaceAll("[\r\n]+?", "");
@@ -46,6 +52,7 @@ public class HttpHelper extends LoggerObject {
 				connection.setRequestProperty(kvp[0], kvp.length == 2 ? kvp[1] : "");
 			}
 		}
+		// connection.setDoInput(true);
 		try {
 			connection.connect();
 			byte[] responseBytes = readBytes(connection.getInputStream());
@@ -81,12 +88,14 @@ public class HttpHelper extends LoggerObject {
 			}
 		}
 		// 发送POST请求必须设置如下两行
-		connection.setDoOutput(true);
-		connection.setDoInput(true);
 		try {
-			writer = new PrintWriter(connection.getOutputStream());
-			writer.print(param);
-			writer.flush();
+			connection.setDoInput(true);
+			if (param != null && !param.isEmpty()) {
+				connection.setDoOutput(true);
+				writer = new PrintWriter(connection.getOutputStream());
+				writer.print(param);
+				writer.flush();
+			}
 			byte[] responseBytes = readBytes(connection.getInputStream());
 			result = new String(responseBytes, "UTF-8");
 		} catch (IOException e) {

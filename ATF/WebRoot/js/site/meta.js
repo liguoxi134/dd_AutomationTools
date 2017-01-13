@@ -756,9 +756,9 @@ jobScheduleViewModel = function() {
 		selectWeekOfMonth : ko.observable(theDate.getWeekOfMonth(0)),
 		selectMonth : ko.observable(theDate.getMonth()),
 
-		dayMethod : ko.observable(0),
-		monthMethod : ko.observable(0),
-		yearMethod : ko.observable(0),
+		dayMethod : ko.observable("0"),
+		monthMethod :ko.observable("0"),
+		yearMethod : ko.observable("0"),
 
 		cycleTypes : ko.observableArray(),
 		cycleFinishType : ko.observableArray(),
@@ -922,7 +922,7 @@ jobScheduleViewModel = function() {
 			desc += "重复运行";
 		}
 		if (ce.selectCycleType() == "byDay") {
-			if (ce.dayMethod() == 0) {
+			if (ce.dayMethod() == "0") {
 				desc += "，规则为：每隔 " + ce.during() + " 天运行一次";
 			} else {
 				desc += "，规则为：每个工作日运行一次";
@@ -930,13 +930,13 @@ jobScheduleViewModel = function() {
 		} else if (ce.selectCycleType() == "byWeek") {
 			desc += "，规则为：每隔 1 周的 " + vm.findWeeks() + " 各运行一次";
 		} else if (ce.selectCycleType() == "byMonth") {
-			if (ce.monthMethod() == 0) {
+			if (ce.monthMethod() == "0") {
 				desc += "，规则为：每隔 " + ce.during() + " 个月的第 " + ce.theCount() + " 天运行一次";
 			} else {
 				desc += "，规则为：每隔 " + ce.during() + " 个月的 " + vm.findWeeksOfMonth() + vm.findWeekEx() + " 运行一次";
 			}
 		} else if (ce.selectCycleType() == "byYear") {
-			if (ce.yearMethod() == 0) {
+			if (ce.yearMethod() == "0") {
 				desc += "，规则为：每隔 " + ce.during() + " 年的 " + vm.findMonth() + " 的第 " + ce.theCount() + " 日运行一次";
 			} else {
 				desc += "，规则为：每隔 " + ce.during() + " 年的 " + vm.findMonth() + " 的 " + vm.findWeeksOfMonth() + vm.findWeekEx() + " 运行一次";

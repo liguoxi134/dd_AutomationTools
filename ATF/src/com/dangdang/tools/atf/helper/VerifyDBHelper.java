@@ -14,12 +14,12 @@ public class VerifyDBHelper extends LoggerObject {
 	private static List<VerifyDatabaseConfig> dbList = null;
 
 	public static void reset() {
-		DEBUG("Setting ATF configuration base path: " + System.getProperty("user.dir") + "/ATF_v2/");
-		System.setProperty("atf.config.dir", System.getProperty("user.dir") + "/ATF_v2/");
+		DEBUG("Setting ATF configuration base path: " + System.getProperty("user.dir") + "/ATF_Config/");
+		System.setProperty("atf.config.dirs", System.getProperty("user.dir") + "/ATF_Config/");
 		dbList = new ArrayList<VerifyDatabaseConfig>();
 		SAXReader saxReader = new SAXReader();
 		Document document = null;
-		String path = System.getProperty("atf.config.dir") + "verifyDBServer.xml";
+		String path = System.getProperty("atf.config.dirs") + "verifyDBServer.xml";
 		try {
 			document = saxReader.read(path);
 			@SuppressWarnings("unchecked")

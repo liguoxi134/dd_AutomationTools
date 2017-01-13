@@ -35,10 +35,10 @@ public class HibernateHelper extends LoggerObject {
 	}
 
 	private static void loadConfig() {
-		DEBUG("Setting ATF configuration base path: " + System.getProperty("user.dir") + "/ATF_v2/");
-		System.setProperty("atf.config.dir", System.getProperty("user.dir") + "/ATF_v2/");
+		DEBUG("Setting ATF configuration base path: " + System.getProperty("user.dir") + "/ATF_Config/");
+		System.setProperty("atf.config.dirs", System.getProperty("user.dir") + "/ATF_Config/");
 		TESTSYSTEMMAP = new HashMap<String, TestSystem>();
-		String path = System.getProperty("atf.config.dir") + "database.hibernate.cfg.xml";
+		String path = System.getProperty("atf.config.dirs") + "database.hibernate.cfg.xml";
 		DEBUG("Loading config file: " + path);
 		SAXReader saxReader = new SAXReader();
 		Document document = null;
@@ -54,18 +54,13 @@ public class HibernateHelper extends LoggerObject {
 				config.setName(db.attributeValue("name"));
 				config.setState(Boolean.parseBoolean(db.attributeValue("state")));
 				TESTSYSTEMMAP.put(config.getId(), config);
-				// System.out.println("create database atf_dbs_" +
-				// config.getId() + " DEFAULT CHARACTER SET utf8;");
+				//System.out.println("create database atf_dbs_" + config.getId() + " DEFAULT CHARACTER SET utf8;");
 				// insert into atf_dbs_lipingka.tbl_TestInterface select * from
 				// atf_db_lipingka.ti;
 				// insert into atf_dbs_lipingka.tbl_TestCase select * from
 				// atf_db_lipingka.tc;
-				// System.out.println("insert into
-				// atf_dbs_"+config.getId()+".tbl_TestInterface select * from
-				// atf_db_"+config.getId()+".ti");
-				// System.out.println("insert into
-				// atf_dbs_"+config.getId()+".tbl_TestCase select * from
-				// atf_db_"+config.getId()+".tc");
+//				System.out.println("insert into atf_dbs_" + config.getId() + ".tbl_TestInterface select * from atf_db_" + config.getId() + ".ti");
+//				System.out.println("insert into atf_dbs_" + config.getId() + ".tbl_TestCase select * from atf_db_" + config.getId() + ".tc");
 				DEBUG("Add new DATABASE: " + config.toJson());
 			}
 		} catch (DocumentException e) {
@@ -87,8 +82,8 @@ public class HibernateHelper extends LoggerObject {
 					DEBUG("Find connection for " + testSystemId + ", will delete it and build new one");
 					connectionPool.remove(testSystemId);
 				}
-				DEBUG("Build new connection for " + testSystemId + ", config path: " + System.getProperty("atf.config.dir") + testSystemId + ".hibernate.cfg.xml");
-				Configuration configuration = new Configuration().configure(new File(System.getProperty("atf.config.dir") + testSystemId + ".hibernate.cfg.xml"));
+				DEBUG("Build new connection for " + testSystemId + ", config path: " + System.getProperty("atf.config.dirs") + testSystemId + ".hibernate.cfg.xml");
+				Configuration configuration = new Configuration().configure(new File(System.getProperty("atf.config.dirs") + testSystemId + ".hibernate.cfg.xml"));
 				DEBUG("Build new connection for " + testSystemId + " successfully!!");
 				connectionPool.put(testSystemId, configuration);
 				return configuration;
@@ -126,7 +121,7 @@ public class HibernateHelper extends LoggerObject {
 					DEBUG("Find sessionFactory for " + testSystemId + ", will delete it and build new one");
 					sessionFactoryPool.remove(testSystemId);
 				}
-				DEBUG("Build new sessionFactory for " + testSystemId + ", config path: " + System.getProperty("atf.config.dir") + testSystemId + ".hibernate.cfg.xml");
+				DEBUG("Build new sessionFactory for " + testSystemId + ", config path: " + System.getProperty("atf.config.dirs") + testSystemId + ".hibernate.cfg.xml");
 				SessionFactory sessionFactory = getConnection(testSystemId).buildSessionFactory();
 				DEBUG("Build new sessionFactory for " + testSystemId + " successfully!!");
 				sessionFactoryPool.put(testSystemId, sessionFactory);
@@ -169,7 +164,7 @@ public class HibernateHelper extends LoggerObject {
 					DEBUG("Find session for " + testSystemId + ", will delete it and build new one");
 					sessionPool.remove(testSystemId);
 				}
-				DEBUG("Build new session for " + testSystemId + ", config path: " + System.getProperty("atf.config.dir") + testSystemId + ".hibernate.cfg.xml");
+				DEBUG("Build new session for " + testSystemId + ", config path: " + System.getProperty("atf.config.dirs") + testSystemId + ".hibernate.cfg.xml");
 				Session session = getSessionFactory(testSystemId).getCurrentSession();
 				DEBUG("Build new session for " + testSystemId + " successfully!!");
 				sessionPool.put(testSystemId, session);
