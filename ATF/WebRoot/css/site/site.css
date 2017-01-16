@@ -1036,7 +1036,7 @@ input:focus,button:focus,a:focus,.button:focus,select:focus,textarea:focus,.fxs-
 }
 input[type=text],input[type=button],select,textarea {
 	padding:0.3125rem 0.5rem;
-	border:1px solid #19507b;
+	border:1px solid rgba(0,0,0,0.2);
     -moz-appearance:none;
 	-webkit-appearance:none;
 	appearance:none;
@@ -1061,6 +1061,7 @@ input[type=text]:hover,select:hover {
 .form-item:last-child {
 	margin-bottom:20px;
 }
+
 .form-item label {
 	width:100%;
 	display:block;
@@ -1070,6 +1071,17 @@ input[type=text]:hover,select:hover {
 	max-width:100%;
 	margin-top:5px;
 	resize:none;
+}
+.form-item-tip {
+  font-size: 80%;
+  background-color: rgba(0,0,0,0.1);
+  margin-top: -1px;
+  border: 1px solid rgba(0,0,0,0.2);
+  padding: 5px 10px;
+  border-radius: 0 0 5px 5px;
+}
+.form-item-tip.hascorner {
+  border-radius: 0 0 5px 5px;
 }
 .msportalfx-form {
 	margin-top:14px;
@@ -1248,15 +1260,15 @@ textarea {
 }
 .exact:not(:empty ) {
 	color:green;
-	margin:0 5 px;
+	margin:0 5px;
 }
 .part:not(:empty ) {
 	color:gray;
-	margin:0 5 px;
+	margin:0 5px;
 }
 .diff:not(:empty ) {
 	color:red;
-	margin:0 5 px;
+	margin:0 5px;
 }
 .spinner {
 	margin:100px auto;
@@ -1683,6 +1695,9 @@ a.fxs-topbar-home {
 .c-row:nth-child(2n+1) {
 	background-color:rgba(25,80,123,0.1);
 }
+.c-row.selected {
+  background-color: rgba(0,0,0,0.2);
+}
 .c-row:HOVER {
 	background-color:rgba(25,80,123,0.2);
 }
@@ -1862,7 +1877,7 @@ table.run-c-table td:LAST-CHILD {
 	background-color:rgba(0,0,0,0.3);
 }
 .tile-item {
-	margin-bottom:5px;
+	margin-bottom:1px;
 	background-color:rgba(0,0,0,0.1);
 	display:flex;
 	align-items:stretch;
@@ -1880,6 +1895,11 @@ table.run-c-table td:LAST-CHILD {
 	min-width:80px;
 	text-align:center;
 	color:rgba(0,0,0,0.5);
+}
+
+.tile-item:hover {
+  outline: 1px solid gray;
+  background-color: rgba(0,0,0,0.2);
 }
 .tile-title > :first-child {
 	width: 100%;

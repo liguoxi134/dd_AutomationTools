@@ -59,6 +59,26 @@ jQuery.extend({
 			ko.applyBindings(vm, blade[0]);
 		}
 	},
+	dbs:{
+		list:function(){
+			var vm = new databaseServerListViewModel();
+			vm.init();
+			var blade = $("#databaseServerList");
+			ko.applyBindings(vm, blade[0]);
+		},
+		create:function(){
+			var vm = new databaseServerCreateViewModel();
+			vm.init();
+			var blade = $("#databaseServerCreate");
+			ko.applyBindings(vm, blade[0]);
+		},
+		edit:function(){
+			var vm = new databaseServerEditViewModel();
+			vm.init();
+			var blade = $("#databaseServerEdit");
+			ko.applyBindings(vm, blade[0]);
+		},
+	},
 	registVM : function() {
 		$("[data-vm]:not([vm-reg])").each(function() {
 			var vm = $(this).attr("data-vm");

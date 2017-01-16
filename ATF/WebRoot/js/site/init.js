@@ -55,3 +55,15 @@ jobScheduleViewModel.prototype.init = function() {
 	var vm = jobScheduleViewModel.prototype.vm;
 	init(vm, "#jobSchedule")
 };
+databaseServerListViewModel.prototype.init = function() {
+	var vm = databaseServerListViewModel.prototype.vm;
+	init(vm, "#databaseServerList")
+};
+databaseServerCreateViewModel.prototype.init = function() {
+	var vm = databaseServerCreateViewModel.prototype.vm;
+	init(vm, "#databaseServerCreate")
+};
+databaseServerEditViewModel.prototype.init = function() {
+	var vm = databaseServerEditViewModel.prototype.vm;
+	init(vm, "#databaseServerEdit")
+};

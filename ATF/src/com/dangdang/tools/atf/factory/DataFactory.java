@@ -21,18 +21,20 @@ import com.dangdang.tools.atf.entity.TestCase;
 import com.dangdang.tools.atf.entity.TestConfig;
 import com.dangdang.tools.atf.entity.TestInterface;
 import com.dangdang.tools.atf.entity.TestSystem;
+import com.dangdang.tools.atf.entity.VerifyDatabaseConfig;
 import com.dangdang.tools.atf.helper.HibernateHelper;
 import com.dangdang.tools.atf.helper.VerifyDBHelper;
-import com.dangdang.tools.atf.models.VerifyDatabaseConfig;
 
 public class DataFactory {
 
-	public static List<VerifyDatabaseConfig> getVerifyDatabaseConfigs() {
-		List<VerifyDatabaseConfig> list = VerifyDBHelper.getList();
-		if (list == null) {
-			return new ArrayList<VerifyDatabaseConfig>();
-		}
-		return list;
+	public static boolean checkVerifyDatabase(String ip, String port, String pwd, String uid, String type) {
+		Map<String, Object> args = new HashMap<String, Object>();
+		args.put("ip", ip);
+		args.put("port", port);
+		args.put("pwd", pwd);
+		args.put("uid", uid);
+		args.put("type", type);
+		return exist(VerifyDatabaseConfig.class, args, "vdbs");
 	}
 
 	public static boolean checkTestInterface(String url, String name, String testSystemId) {
@@ -46,6 +48,11 @@ public class DataFactory {
 		Map<String, Object> args = new HashMap<String, Object>();
 		args.put("name", name);
 		return exist(TestCase.class, args, testSystemId);
+	}
+
+	public static VerifyDatabaseConfig getVerifyDatabaseConfigById(int configId) {
+		DEBUG("DataFactory.getVerifyDatabaseConfigById()");
+		return find(VerifyDatabaseConfig.class, configId, "vdbs");
 	}
 
 	public static TestInterface getTestInterfaceById(int testInterfaceId, String testSystemId) {
@@ -71,6 +78,16 @@ public class DataFactory {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static List<VerifyDatabaseConfig> getVerifyDatabaseConfigs() {
+		List<VerifyDatabaseConfig> list = VerifyDBHelper.getList();
+		if (list == null) {
+			return new ArrayList<VerifyDatabaseConfig>();
+		}
+		Collections.sort(list);
+		return list;
+	}
+
 	public static List<TestSystem> getAllTestSystem() {
 		DEBUG("DataFactory.getAllTestSystem()");
 		return HibernateHelper.getAllTestSystem();
@@ -94,6 +111,12 @@ public class DataFactory {
 		return result;
 	}
 
+	public static boolean deleteVerifyDatabaseConfig(int configId) {
+		VerifyDatabaseConfig testInterface = find(VerifyDatabaseConfig.class, configId, "vdbs");
+		boolean result = delete(VerifyDatabaseConfig.class, testInterface, "vdbs");
+		return result;
+	}
+
 	public static boolean deleteTestInterface(int testInterfaceId, String testSystemId) {
 		DEBUG("DataFactory.deleteTestInterface()");
 		DEBUG("Find test interface:" + testInterfaceId + "==>" + testSystemId);
@@ -110,6 +133,25 @@ public class DataFactory {
 		DEBUG("Delete test case:" + testCase.toJson());
 		boolean result = delete(TestCase.class, testCase, testSystemId);
 		return result;
+	}
+
+	public static boolean updateVerifyDatabaseConfig(VerifyDatabaseConfig config) {
+		String testSystemId = "vdbs";
+		if (config.getId() > 0) {
+			VerifyDatabaseConfig dbConfig = find(VerifyDatabaseConfig.class, config.getId(), testSystemId);
+			if (dbConfig != null) {
+				dbConfig.setIp(config.getIp());
+				dbConfig.setMore(config.getMore());
+				dbConfig.setPort(config.getPort());
+				dbConfig.setName(config.getName());
+				dbConfig.setType(config.getType());
+				dbConfig.setUid(config.getUid());
+				dbConfig.setPwd(config.getPwd());
+				config = dbConfig;
+				return update(VerifyDatabaseConfig.class, dbConfig, testSystemId);
+			}
+		}
+		return save(VerifyDatabaseConfig.class, config, testSystemId);
 	}
 
 	public static boolean updateTestInterface(TestInterface testInterface, String testSystemId) {
@@ -198,6 +240,25 @@ public class DataFactory {
 		}
 		ERROR("Cannot find test case by id: " + testCaseId + ", operation cancel!");
 		return false;
+	}
+
+	public static void copyVerifyDatabaseConfig(int[] configIds) {
+		String testSystemId = "vdbs";
+		for (int testCaseId : configIds) {
+			VerifyDatabaseConfig config = find(VerifyDatabaseConfig.class, testCaseId, testSystemId);
+			if (config == null) {
+				return;
+			}
+			VerifyDatabaseConfig cloneTestConfig = new VerifyDatabaseConfig();
+			cloneTestConfig.setIp(config.getIp());
+			cloneTestConfig.setMore(config.getMore());
+			cloneTestConfig.setPort(config.getPort());
+			cloneTestConfig.setName(config.getName());
+			cloneTestConfig.setType(config.getType());
+			cloneTestConfig.setUid(config.getUid());
+			cloneTestConfig.setPwd(config.getPwd());
+			save(VerifyDatabaseConfig.class, cloneTestConfig, testSystemId);
+		}
 	}
 
 	public static void copyTestCase(int[] testCaseIds, int testInterfaceId, String testSystemId) {

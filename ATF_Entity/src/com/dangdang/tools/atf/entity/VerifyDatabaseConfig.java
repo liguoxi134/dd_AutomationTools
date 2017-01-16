@@ -1,19 +1,44 @@
-package com.dangdang.tools.atf.models;
+package com.dangdang.tools.atf.entity;
 
+import java.text.Collator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class VerifyDatabaseConfig {
+@Entity
+@Table(name = "tbl_VerifyDatabase")
+public class VerifyDatabaseConfig implements SoftDeleteObject {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private int id;
+	@Column(columnDefinition = "varchar(255)", nullable = false)
 	private String name;
+	@Column(columnDefinition = "varchar(255)", nullable = false)
 	private String ip;
+	@Column(columnDefinition = "varchar(255)")
 	private String uid;
+	@Column(columnDefinition = "varchar(255)")
 	private String pwd;
+	@Column(columnDefinition = "varchar(255)")
 	private String port;
+	@Column(columnDefinition = "varchar(1024)")
 	private String more;
+	@Column(columnDefinition = "varchar(255)", nullable = false)
 	private String type;
+	@JsonIgnore
+	private boolean state;
 
 	public String getName() {
 		return name;
@@ -63,12 +88,14 @@ public class VerifyDatabaseConfig {
 		this.type = type;
 	}
 
+	@JsonIgnore
 	public String getBaseConnectionString() {
 		StringBuffer sb = new StringBuffer();
 		sb = sb.append("jdbc:").append(this.type.toLowerCase()).append("://").append(this.ip).append(this.port != null && !this.port.isEmpty() ? ":" + this.port : "").append("/");
 		return sb.toString();
 	}
 
+	@JsonIgnore
 	public Properties getProperties() {
 		Properties info = new Properties();
 		info.put("user", this.uid);
@@ -111,5 +138,33 @@ public class VerifyDatabaseConfig {
 
 	public void setMore(String more) {
 		this.more = more;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public void setState(boolean value) {
+		this.state = value;
+	}
+
+	@Override
+	public boolean isState() {
+		return this.state;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		if (o instanceof VerifyDatabaseConfig) {
+			VerifyDatabaseConfig another = (VerifyDatabaseConfig) o;
+			return Collator.getInstance(Locale.CHINESE).compare(this.name, another.name);
+		} else {
+			return -1;
+		}
 	}
 }

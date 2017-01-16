@@ -1,4 +1,4 @@
-<%@tag pageEncoding="UTF-8"%>
+<%@tag body-content="scriptless" pageEncoding="UTF-8"%>
 <%@attribute name="text" required="true" type="java.lang.String"%>
 <%@attribute name="tip" required="false" type="java.lang.String"%>
 <%@attribute name="bind" required="true" type="java.lang.String"%>
@@ -20,4 +20,5 @@
 		%>
 		<textarea style="white-space: pre" rows="10" cols="" placeholder="${tip}" data-bind="${bind}"></textarea>
 	</label>
+	<jsp:doBody></jsp:doBody>
 </div>

@@ -58,7 +58,7 @@ testCaseListViewModel.prototype.itemEditClick = function(data) {
 
 
 //execute when user click each test interface item from list
-testInterfaceListViewModel.prototype.itemClick = function(data) { 
+testInterfaceListViewModel.prototype.itemClick = function(data) {
 	var vm = testInterfaceListViewModel.prototype.vm;
 	//close next all blades
 	vm.currentBlade().closeNextAllBlades();
@@ -95,6 +95,8 @@ testCaseListViewModel.prototype.itemClick = function(data) {
 testCaseRunViewModel.prototype.itemClick = function(data, obj) {
 	var vm = testCaseRunViewModel.prototype.vm;
 	//_navExpectResultItem
+	$(".c-row.selected").removeClass("selected");
+	$(obj.currentTarget).addClass("selected");
 	if (vm.visible.expectResult()) {
 		var nodeName = vm.getTokenFieldName(data) || data.node;
 		var group = "[data-group='" + data.group + "']";
@@ -112,7 +114,7 @@ testCaseRunViewModel.prototype.itemClick = function(data, obj) {
 	//_navRealResultItem
 	if (vm.visible.realResult()) {
 		if (data.state != "Miss") {
-			var nodeName = vm.getTokenFieldName(data)||data.realNode;
+			var nodeName = vm.getTokenFieldName(data) || data.realNode;
 			var group = "[data-group='" + data.realGroup + "']";
 			var value = "[data-value='" + (data.realNode == null ? "null" : data.realNode) + "']";
 			var node = "[data-node='" + nodeName + "']";
@@ -145,14 +147,14 @@ testInterfaceListViewModel.prototype.refresh = function() {
 		}
 		vm.isLoadingData(false);
 	}
-
+	
 	//reset search text
 	vm.searchText("");
 	//reset selected test interface items
 	$.gs.sti.removeAll();
 	var postData = {
-		testSystemId : $.gs.ts.id(),
-		"rid" : vm.referenceId
+			testSystemId : $.gs.ts.id(),
+			"rid" : vm.referenceId
 	};
 	//get latest test interface list with post
 	$.post("./ti/refresh", postData, refreshResponse);
@@ -270,3 +272,41 @@ testCaseRunViewModel.prototype.checkVisible = function(data) {
 	}
 	return false;
 };
+databaseServerListViewModel.prototype.itemEditClick = function(data) {
+	var vm = databaseServerListViewModel.prototype.vm;
+	vm.currentBlade().closeNextAllBlades();
+	//get edit item from current mouse pointer
+	$.gs.editItem(data);
+	//show new blade to allow user edit
+	var _tmpBlade = $.showBlade(
+		{
+			title : "修改数据库校验服务器",
+			subtitle : data.name,
+			url : "./dbs/edit"
+		});
+	//scroll new blade into viewport
+	_tmpBlade.ensureElementIntoView();
+}
+databaseServerListViewModel.prototype.itemRemoveClick = function(data) {
+	if (confirm("确定要删除此校验服务器吗？") == true) {
+		var vm = databaseServerListViewModel.prototype.vm;
+		$.post("./dbs/delete", {
+			rid : data.id
+		}, function(data) {
+			vm.currentBlade().closeNextAllBlades();
+			vm.currentBlade().ensureElementIntoView();
+			alert(data.message);
+			vm.refresh();
+		});
+	}
+}
+
+//execute when refresh test interface list
+databaseServerListViewModel.prototype.refresh = function() {
+	var vm = databaseServerListViewModel.prototype.vm;
+	vm.isLoadingData(true);
+	$.post("./dbs/list", function(data) {
+		vm.verifyDatabases(data.vdbs);
+		vm.isLoadingData(false)
+	});
+}

@@ -535,10 +535,10 @@ testConfigDetailsViewModel = function() {
 				value : "数据库查询结果校验"
 			},
 			verifyServers : ko.observableArray(),
-			findVerifyServer : function(name) {
+			findVerifyServer : function(id) {
 				var length = this.verifyServers().length;
 				for (var i = 0; i < length; i++) {
-					if (this.verifyServers()[i].name == name) {
+					if (this.verifyServers()[i].id == id) {
 						return this.verifyServers()[i];
 					}
 				}
@@ -558,7 +558,7 @@ testConfigDetailsViewModel = function() {
 				this.text = ko.observable();
 				this.get = function() {
 					return {
-						server : this.server()[0],
+						server : this.server()[0].id,
 						database : this.database(),
 						query : this.query(),
 						text : this.text()
@@ -586,10 +586,10 @@ testConfigDetailsViewModel = function() {
 			},
 			showCreateLayout : function(data, e) {
 				var model = new this.model();
-				model.database("1");
+				model.database("");
 				model.server([this.verifyServers()[0]]);
-				model.query("2");
-				model.text("3");
+				model.query("");
+				model.text("");
 				vm.resultVerify.editConfig(model);
 				vm.showEditLayout(data, e);
 			},
@@ -655,7 +655,10 @@ testConfigDetailsViewModel = function() {
 							vdbs = [];
 						for (var i = 0; i < length; i++) {
 							var vdb = new this.model();
-							vdb.server([this.findVerifyServer(result[i].server.name)]);
+							var s = this.findVerifyServer(result[i].server);
+							if (s != undefined) {
+								vdb.server([s]);
+							}
 							vdb.database(result[i].database);
 							vdb.query(result[i].query);
 							vdb.text(result[i].text);
@@ -757,7 +760,7 @@ jobScheduleViewModel = function() {
 		selectMonth : ko.observable(theDate.getMonth()),
 
 		dayMethod : ko.observable("0"),
-		monthMethod :ko.observable("0"),
+		monthMethod : ko.observable("0"),
 		yearMethod : ko.observable("0"),
 
 		cycleTypes : ko.observableArray(),
@@ -948,4 +951,33 @@ jobScheduleViewModel = function() {
 	jobScheduleViewModel.prototype.vm = vm;
 	//to save current balde
 	jobScheduleViewModel.prototype.currentBlade = ko.observable();
+}
+
+databaseServerListViewModel = function() {
+	var vm = this;
+
+	vm.isLoadingData = ko.observable(true);
+
+	vm.verifyDatabases = ko.observableArray();
+
+	databaseServerListViewModel.prototype.vm = vm;
+	databaseServerListViewModel.prototype.currentBlade = ko.observable();
+}
+
+databaseServerCreateViewModel = function() {
+	var vm = this;
+
+	vm.isSavingData = ko.observable(false);
+
+	databaseServerCreateViewModel.prototype.vm = vm;
+	databaseServerCreateViewModel.prototype.currentBlade = ko.observable();
+}
+
+databaseServerEditViewModel = function() {
+	var vm = this;
+
+	vm.isSavingData = ko.observable(false);
+
+	databaseServerEditViewModel.prototype.vm = vm;
+	databaseServerEditViewModel.prototype.currentBlade = ko.observable();
 }

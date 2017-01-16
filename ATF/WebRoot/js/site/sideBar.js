@@ -30,6 +30,9 @@
 	}, {
 		name : "日志查看器",
 		url : "./log/index"
+	}, {
+		name : "数据库服务器配置",
+		url : "./dbs/list"
 	}]);
 	_self.systemClick = function(data, evt) {
 		$.closeAllBlades();

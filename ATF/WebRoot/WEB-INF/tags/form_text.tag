@@ -1,4 +1,4 @@
-<%@tag pageEncoding="UTF-8"%>
+<%@tag body-content="scriptless" pageEncoding="UTF-8"%>
 <%@attribute name="text" required="true" type="java.lang.String"%>
 <%@attribute name="tip" required="false" type="java.lang.String"%>
 <%@attribute name="bind" required="true" type="java.lang.String"%>
@@ -18,6 +18,7 @@
 		<%
 			}
 		%>
-		<input type="text" data-bind="${bind}"  placeholder="${tip}"/>
+		<input type="text" data-bind="${bind}" placeholder="${tip}" />
 	</label>
+	<jsp:doBody></jsp:doBody>
 </div>

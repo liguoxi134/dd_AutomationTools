@@ -485,21 +485,21 @@ testConfigDetailsViewModel.prototype.getCommands = function() {
 			}
 		})
 	}
-//	function runClick() {
-//		
-//		$.gs.io.requestBody(vm.inArgs.requestBody());
-//		$.gs.io.requestHeaders(vm.summary.requestHeaders());
-//		$.gs.io.requestMethod(vm.summary.requestMethod());
-//		$.gs.io.requestType(vm.inArgs.getRequestType());
-//		$.gs.io.requestUrl(vm.summary.requestUrl());
-//		
-//		vm.currentBlade().closeNextAllBlades();
-//		var newBlade = $.showBlade({
-//			title : "参数测试",
-//			url : "./io/run",
-//		});
-//		newBlade.ensureElementIntoView();
-//	}
+	//	function runClick() {
+	//		
+	//		$.gs.io.requestBody(vm.inArgs.requestBody());
+	//		$.gs.io.requestHeaders(vm.summary.requestHeaders());
+	//		$.gs.io.requestMethod(vm.summary.requestMethod());
+	//		$.gs.io.requestType(vm.inArgs.getRequestType());
+	//		$.gs.io.requestUrl(vm.summary.requestUrl());
+	//		
+	//		vm.currentBlade().closeNextAllBlades();
+	//		var newBlade = $.showBlade({
+	//			title : "参数测试",
+	//			url : "./io/run",
+	//		});
+	//		newBlade.ensureElementIntoView();
+	//	}
 	var saveCommand = {
 		icon : $.bladeIcons.saveIcon,
 		text : "保存",
@@ -511,11 +511,11 @@ testConfigDetailsViewModel.prototype.getCommands = function() {
 		click : vm.refresh
 	}
 
-//	var runCommand = {
-//		icon : $.bladeIcons.runIcon,
-//		text : "执行",
-//		click : runClick
-//	}
+	//	var runCommand = {
+	//		icon : $.bladeIcons.runIcon,
+	//		text : "执行",
+	//		click : runClick
+	//	}
 	return [saveCommand, refreshCommand];
 }
 jobScheduleViewModel.prototype.getCommands = function() {
@@ -613,4 +613,90 @@ jobScheduleViewModel.prototype.getCommands = function() {
 		}
 	}
 	return [runCommand, scheduleCommand];
+}
+databaseServerListViewModel.prototype.getCommands = function() {
+	var vm = databaseServerListViewModel.prototype.vm;
+	var addServerCommand = {
+		icon : $.bladeIcons.addIcon,
+		text : "添加",
+		click : function() {
+			$.gs.editItem({
+				id : "",
+				name : "",
+				ip : "",
+				uid : "",
+				pwd : "",
+				port : "",
+				more : "useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true",
+				type : ""
+			});
+			vm.currentBlade().closeNextAllBlades();
+			var blade = $.showBlade({
+				title : "添加数据库校验服务器",
+				url : "./dbs/create"
+			});
+			blade.ensureElementIntoView();
+		}
+	}
+//	var copyServerCommand = {
+//		icon : $.bladeIcons.duplicateIcon,
+//		text : "克隆",
+//		click : function() {}
+//	}
+	var refreshServerCommand = {
+		icon : $.bladeIcons.refreshIcon,
+		text : "刷新",
+		click : vm.refresh
+	}
+	return [addServerCommand,  refreshServerCommand];
+}
+
+databaseServerCreateViewModel.prototype.getCommands = function() {
+	var vm = databaseServerCreateViewModel.prototype.vm;
+	var saveServerCommand = {
+		icon : $.bladeIcons.saveIcon,
+		text : "保存",
+		click : function() {
+			var model = $.gs.editItem();
+			$.post("./dbs/add", model, function(data) {
+				alert(data.message);
+				var prev = vm.currentBlade().prev();
+				$(prev).closeNextAllBlades();
+				prev.refreshBlade();
+				prev.ensureElementIntoView();
+			});
+		}
+	}
+	var resetServerCommand = {
+		icon : $.bladeIcons.refreshIcon,
+		text : "重置",
+		click : function() {}
+	}
+	return [saveServerCommand, resetServerCommand];
+}
+
+databaseServerEditViewModel.prototype.getCommands = function() {
+	var vm = databaseServerEditViewModel.prototype.vm;
+	var saveServerCommand = {
+		icon : $.bladeIcons.saveIcon,
+		text : "保存",
+		click : function() {
+			var model = $.gs.editItem();
+			$.post("./dbs/edit", model, function(data) {
+				alert(data.message);
+				var prev = vm.currentBlade().prev();
+				$(prev).closeNextAllBlades();
+				prev.refreshBlade();
+				prev.ensureElementIntoView();
+			});
+		}
+	}
+	var resetServerCommand = {
+		icon : $.bladeIcons.refreshIcon,
+		text : "重置",
+		click : function() {
+			$.gs.editItem();
+		}
+	}
+	return [saveServerCommand, resetServerCommand];
 }
