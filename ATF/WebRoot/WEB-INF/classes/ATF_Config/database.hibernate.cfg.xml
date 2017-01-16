@@ -16,5 +16,6 @@
 	<database id="liquan" name="礼券系统" externalid="礼券系统" state="true"></database>
 	<database id="tuihuanhuo" name="退换货系统" externalid="退换货系统" state="true"></database>
 	<database id="yicang" name="移仓系统" externalid="移仓系统" state="true"></database>
+	<database id="yushou" name="预售系统" externalid="预售系统" state="true"></database>
 	<database id="zhifu" name="支付系统" externalid="支付系统" state="true"></database>
 </database-config>
