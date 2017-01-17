@@ -53,10 +53,22 @@ public class TestInterfacePage extends BasePage {
 			String url = getString(request, "url");
 			String description = getString(request, "description");
 
-			boolean isExist = DataFactory.checkTestInterface(url, name, testSystemId);
-			if (isExist) {
-				throw new Exception("测试接口的名称或者URL已经存在，请不要重复添加!!");
+			List<TestInterface> exist = DataFactory.checkTestInterface(url, name, testSystemId);
+
+			if (!exist.isEmpty()) {
+				StringBuffer buffer = new StringBuffer();
+				for (TestInterface config : exist) {
+					buffer.append("已经存在相同测试接口:" + config.getName() + "\r\n");
+				}
+				if (buffer.length() > 0) {
+					writeMessage(response, buffer.replace(buffer.length() - "\r\n".length() , buffer.length(), "").toString(), false);
+					return;
+				} else {
+					writeMessage(response, "保存成功", true);
+					return;
+				}
 			}
+
 			DEBUG("TestInterfacePage.Add()：Get Parameter [testSystemId:" + testSystemId + ",name:" + name + ",type:" + type + ",url:" + url + ",description:" + description + "]");
 			TestInterface tmp = new TestInterface(type, url, name, description);
 			DEBUG("TestInterfacePage.Add()：Package new test interface: " + tmp.toJson());
@@ -79,6 +91,25 @@ public class TestInterfacePage extends BasePage {
 			TestInterfaceType type = getEnum(request, "type", TestInterfaceType.class, TestInterfaceType.GET);
 			String url = getString(request, "url");
 			String description = getString(request, "description");
+
+			List<TestInterface> exist = DataFactory.checkTestInterface(url, name, testSystemId);
+
+			if (!exist.isEmpty()) {
+				StringBuffer buffer = new StringBuffer();
+				for (TestInterface config : exist) {
+					if (config.getId() != id) {
+						buffer.append("已经存在相同测试接口:" + config.getName() + "\r\n");
+					}
+				}
+				if (buffer.length() > 0) {
+					writeMessage(response, buffer.replace(buffer.length() - "\r\n".length() , buffer.length(), "").toString(), false);
+					return;
+				} else {
+					writeMessage(response, "保存成功", true);
+					return;
+				}
+			}
+
 			DEBUG("TestInterfacePage.Edit(): Get Parameter [testSystemId:" + testSystemId + ",id:" + id + ",name:" + name + ",type:" + type + ",url:" + url + ",description:" + description + "]");
 			TestInterface tmp = new TestInterface(type, url, name, description);
 			tmp.setId(id);

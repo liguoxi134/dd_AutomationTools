@@ -9,10 +9,12 @@ public class JsonComparer implements IComparer {
 	public String compare(String expect, String real) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		if (expect == null || expect.trim().isEmpty()) {
-			expect = "{\"code\":false,\"message\":\"预期结果为空,无法进行比较\"}";
+			throw new Exception("预期结果为空，对比没有任何意义");
+//			expect = "{\"code\":false,\"message\":\"预期结果为空,无法进行比较\"}";
 		}
 		if (real == null || real.trim().isEmpty()) {
-			real = "{\"code\":false,\"message\":\"实际结果为空,无法进行比较\"}";
+			real="{}";
+//			real = "{\"code\":false,\"message\":\"实际结果为空,无法进行比较\"}";
 		}
 		JsonNode expectNode = mapper.readTree(expect);
 		JsonNode realNode = mapper.readTree(real);

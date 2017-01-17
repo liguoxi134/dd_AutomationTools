@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dangdang.tools.atf.entity.TestInterface;
 import com.dangdang.tools.atf.entity.VerifyDatabaseConfig;
 import com.dangdang.tools.atf.factory.DataFactory;
 
@@ -21,9 +22,20 @@ public class DatabaseServerPage extends BasePage {
 			String type = getString(request, "type");
 			String uid = getString(request, "uid");
 
-			boolean isExist = DataFactory.checkVerifyDatabase(ip, port, pwd, uid, type);
-			if (isExist) {
-				throw new Exception("校验服务器已经存在，请不要重复添加!!");
+			List<VerifyDatabaseConfig> exist = DataFactory.checkVerifyDatabase(ip, port, pwd, uid, type, name);
+
+			if (!exist.isEmpty()) {
+				StringBuffer buffer = new StringBuffer();
+				for (VerifyDatabaseConfig config : exist) {
+					buffer.append("已经存在重复的校验服务器，服务器名称为:" + config.getName() + "\r\n");
+				}
+				if (buffer.length() > 0) {
+					writeMessage(response, buffer.replace(buffer.length() - "\r\n".length() - 1, buffer.length(), "").toString(), false);
+					return;
+				} else {
+					writeMessage(response, "保存成功", true);
+					return;
+				}
 			}
 
 			VerifyDatabaseConfig tmp = new VerifyDatabaseConfig();
@@ -52,6 +64,24 @@ public class DatabaseServerPage extends BasePage {
 			String pwd = getString(request, "pwd");
 			String type = getString(request, "type");
 			String uid = getString(request, "uid");
+
+			List<VerifyDatabaseConfig> exist = DataFactory.checkVerifyDatabase(ip, port, pwd, uid, type, name);
+
+			if (!exist.isEmpty()) {
+				StringBuffer buffer = new StringBuffer();
+				for (VerifyDatabaseConfig config : exist) {
+					if (config.getId() != id) {
+						buffer.append("已经存在重复的校验服务器，服务器名称为:" + config.getName() + "\r\n");
+					}
+				}
+				if (buffer.length() > 0) {
+					writeMessage(response, buffer.replace(buffer.length() - "\r\n".length() - 1, buffer.length(), "").toString(), false);
+					return;
+				} else {
+					writeMessage(response, "保存成功", true);
+					return;
+				}
+			}
 
 			VerifyDatabaseConfig tmp = new VerifyDatabaseConfig();
 			tmp.setIp(ip);

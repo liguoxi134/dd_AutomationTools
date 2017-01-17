@@ -36,9 +36,20 @@ public class TestCasePage extends BasePage {
 			String name = getString(request, "name");
 			String description = getString(request, "description");
 
-			boolean isExist = DataFactory.checkTestCase(name, testSystemId);
-			if (isExist) {
-				throw new Exception("测试用例的名称已经存在，请不要重复添加!!");
+			List<TestCase> exist = DataFactory.checkTestCase(name, testSystemId);
+
+			if (!exist.isEmpty()) {
+				StringBuffer buffer = new StringBuffer();
+				for (TestCase config : exist) {
+					buffer.append("已经存在相同测试用例:" + config.getName() + "\r\n");
+				}
+				if (buffer.length() > 0) {
+					writeMessage(response, buffer.replace(buffer.length() - "\r\n".length(), buffer.length(), "").toString(), false);
+					return;
+				} else {
+					writeMessage(response, "保存成功", true);
+					return;
+				}
 			}
 
 			DEBUG("TestCasePage.Add(): Get Parameter [rid:" + rid + ",testSystemId:" + testSystemId + ",name:" + name + ",description:" + description + "]");
@@ -51,6 +62,7 @@ public class TestCasePage extends BasePage {
 			ERROR("TestCasePage.Add(): Add test case failed, Exception Result: " + e.getMessage());
 			writeMessage(response, "保存失败：" + e.getMessage(), false);
 		}
+
 	}
 
 	public static void Edit(HttpServletRequest request, HttpServletResponse response) {
@@ -61,6 +73,24 @@ public class TestCasePage extends BasePage {
 			int rid = getInt(request, "rid");
 			String name = getString(request, "name");
 			String description = getString(request, "description");
+
+			List<TestCase> exist = DataFactory.checkTestCase(name, testSystemId);
+
+			if (!exist.isEmpty()) {
+				StringBuffer buffer = new StringBuffer();
+				for (TestCase config : exist) {
+					if (config.getId() != id) {
+						buffer.append("已经存在相同测试用例:" + config.getName() + "\r\n");
+					}
+				}
+				if (buffer.length() > 0) {
+					writeMessage(response, buffer.replace(buffer.length() - "\r\n".length() , buffer.length(), "").toString(), false);
+					return;
+				} else {
+					writeMessage(response, "保存成功", true);
+					return;
+				}
+			}
 			DEBUG("TestCasePage.Edit(): Get Parameter [id:" + id + ",rid:" + rid + ",testSystemId:" + testSystemId + ",name:" + name + ",description:" + description + "]");
 			TestCase tmp = new TestCase(name, description);
 			tmp.setId(id);
@@ -129,6 +159,7 @@ public class TestCasePage extends BasePage {
 		} catch (IOException ex) {
 			ERROR("TestCasePage.Execute(): Cannot create JSON Generator, Exception Message: " + ex.getMessage());
 			writeMessage(response, "出现异常：" + ex.getMessage(), false);
+			return;
 		}
 		for (String id : ids) {
 			if (id.trim().isEmpty()) {
@@ -158,10 +189,15 @@ public class TestCasePage extends BasePage {
 				}
 			}
 			String real = "";
-			if (testInterface.getType() == TestInterfaceType.POST) {
-				real = HttpHelper.doPost(testInterface.getUrl(), testConfig.getRequestBody(), headerList.toArray(new String[0]));
-			} else if (testInterface.getType() == TestInterfaceType.GET) {
-				real = HttpHelper.sendGet(testInterface.getUrl(), testConfig.getRequestBody(), headerList.toArray(new String[0]));
+			try {
+				if (testInterface.getType() == TestInterfaceType.POST) {
+					real = HttpHelper.doPost(testInterface.getUrl(), testConfig.getRequestBody(), headerList.toArray(new String[0]));
+				} else if (testInterface.getType() == TestInterfaceType.GET) {
+					real = HttpHelper.sendGet(testInterface.getUrl(), testConfig.getRequestBody(), headerList.toArray(new String[0]));
+				}
+			} catch (Exception e) {
+				writeMessage(response, "出现异常：" + e.getMessage(), false);
+				return;
 			}
 			JsonNode configNode = null;
 			try {
@@ -187,30 +223,35 @@ public class TestCasePage extends BasePage {
 				}
 				ERROR("Map test case and test interface Exception: " + e.getMessage());
 				writeMessage(response, e.getMessage(), false);
+				return;
 			}
 			try {
 				executeConfig(configNode, "returnConfig", generator, real);
 			} catch (Exception e) {
 				ERROR("Map returnConfig Exception: " + e.getMessage());
 				writeMessage(response, e.getMessage(), false);
+				return;
 			}
 			try {
 				executeConfig(configNode, "databaseConfig", generator, real);
 			} catch (Exception e) {
 				ERROR("Map databaseConfig Exception: " + e.getMessage());
 				writeMessage(response, e.getMessage(), false);
+				return;
 			}
 			try {
 				executeConfig(configNode, "logConfig", generator, real);
 			} catch (Exception e) {
 				ERROR("Map logConfig Exception: " + e.getMessage());
 				writeMessage(response, e.getMessage(), false);
+				return;
 			}
 			try {
 				generator.writeEndObject();// }
 			} catch (IOException e) {
 				ERROR("Write end object Exception: " + e.getMessage());
 				writeMessage(response, e.getMessage(), false);
+				return;
 			}
 		}
 		setContentType(response, ContentType.Json);
@@ -223,8 +264,10 @@ public class TestCasePage extends BasePage {
 			generator.close();
 			System.out.println(result);
 			writeMessage(response, result, true);
+			return;
 		} catch (IOException e) {
 			writeMessage(response, e.getMessage(), false);
+			return;
 		}
 	}
 

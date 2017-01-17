@@ -11,7 +11,7 @@ import java.net.URLConnection;
 import com.dangdang.tools.atf.models.LoggerObject;
 
 public class HttpHelper extends LoggerObject {
-	public static String sendGet(String url, String param, String[] headers) {
+	public static String sendGet(String url, String param, String[] headers) throws Exception {
 		if (headers == null) {
 			headers = new String[0];
 		}
@@ -38,13 +38,13 @@ public class HttpHelper extends LoggerObject {
 		try {
 			realUrl = new URL(urlNameString);
 		} catch (MalformedURLException e) {
-			return e.getMessage();
+			throw e;
 		}
 		URLConnection connection = null;
 		try {
 			connection = realUrl.openConnection();
 		} catch (IOException e) {
-			return e.getMessage();
+			throw e;
 		}
 		for (String header : headers) {
 			String[] kvp = header.split("=", 2);
@@ -58,13 +58,13 @@ public class HttpHelper extends LoggerObject {
 			byte[] responseBytes = readBytes(connection.getInputStream());
 			result = new String(responseBytes, "UTF-8");
 		} catch (IOException e) {
-			return e.getMessage();
+			throw e;
 		}
 
 		return result;
 	}
 
-	public static String doPost(String url, String param, String[] headers) {
+	public static String doPost(String url, String param, String[] headers) throws Exception {
 		PrintWriter writer = null;
 		String result = "";
 		url = url.replaceAll("[\r\n]+?", "");
@@ -72,14 +72,14 @@ public class HttpHelper extends LoggerObject {
 		try {
 			realUrl = new URL(url);
 		} catch (MalformedURLException e) {
-			return e.getMessage();
+			throw e;
 		}
 
 		URLConnection connection;
 		try {
 			connection = realUrl.openConnection();
 		} catch (IOException e) {
-			return e.getMessage();
+			throw e;
 		}
 		for (String header : headers) {
 			String[] kvp = header.split("=", 2);
@@ -99,7 +99,7 @@ public class HttpHelper extends LoggerObject {
 			byte[] responseBytes = readBytes(connection.getInputStream());
 			result = new String(responseBytes, "UTF-8");
 		} catch (IOException e) {
-			return e.getMessage();
+			throw e;
 		}
 
 		return result;

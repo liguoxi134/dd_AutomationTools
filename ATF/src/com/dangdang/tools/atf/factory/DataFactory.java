@@ -6,48 +6,68 @@ import static com.dangdang.tools.atf.helper.HibernateHelper.find;
 import static com.dangdang.tools.atf.helper.HibernateHelper.findAll;
 import static com.dangdang.tools.atf.helper.HibernateHelper.save;
 import static com.dangdang.tools.atf.helper.HibernateHelper.update;
-import static com.dangdang.tools.atf.models.LoggerObject.ERROR;
 import static com.dangdang.tools.atf.models.LoggerObject.DEBUG;
+import static com.dangdang.tools.atf.models.LoggerObject.ERROR;
 import static com.dangdang.tools.atf.models.LoggerObject.WARN;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Restrictions;
 
 import com.dangdang.tools.atf.entity.TestCase;
 import com.dangdang.tools.atf.entity.TestConfig;
 import com.dangdang.tools.atf.entity.TestInterface;
 import com.dangdang.tools.atf.entity.TestSystem;
 import com.dangdang.tools.atf.entity.VerifyDatabaseConfig;
+import com.dangdang.tools.atf.helper.GBKOrder;
 import com.dangdang.tools.atf.helper.HibernateHelper;
-import com.dangdang.tools.atf.helper.VerifyDBHelper;
 
 public class DataFactory {
 
-	public static boolean checkVerifyDatabase(String ip, String port, String pwd, String uid, String type) {
+	public static List<VerifyDatabaseConfig> checkVerifyDatabase(String ip, String port, String pwd, String uid, String type, String name) {
 		Map<String, Object> args = new HashMap<String, Object>();
 		args.put("ip", ip);
 		args.put("port", port);
 		args.put("pwd", pwd);
 		args.put("uid", uid);
 		args.put("type", type);
-		return exist(VerifyDatabaseConfig.class, args, "vdbs");
+		Conjunction junction = Restrictions.conjunction();
+		Conjunction conjunction = Restrictions.conjunction();
+		Disjunction disjunction = Restrictions.disjunction();
+		junction.add(Restrictions.eq("state", true));
+		conjunction.add(Restrictions.allEq(args));
+		disjunction.add(Restrictions.eq("name", name));
+		disjunction.add(conjunction);
+		junction.add(disjunction);
+		return exist(VerifyDatabaseConfig.class, junction, "vdbs");
 	}
 
-	public static boolean checkTestInterface(String url, String name, String testSystemId) {
+	public static List<TestInterface> checkTestInterface(String url, String name, String testSystemId) {
 		Map<String, Object> args = new HashMap<String, Object>();
 		args.put("url", url);
 		args.put("name", name);
-		return exist(TestInterface.class, args, testSystemId);
+		Junction conjunction = Restrictions.conjunction();
+		Junction disjunction = Restrictions.disjunction();
+		conjunction.add(Restrictions.eq("state", true));
+		disjunction.add(Restrictions.eq("url", url));
+		disjunction.add(Restrictions.eq("name", name));
+		conjunction.add(disjunction);
+
+		return exist(TestInterface.class, conjunction, testSystemId);
 	}
 
-	public static boolean checkTestCase(String name, String testSystemId) {
-		Map<String, Object> args = new HashMap<String, Object>();
-		args.put("name", name);
-		return exist(TestCase.class, args, testSystemId);
+	public static List<TestCase> checkTestCase(String name, String testSystemId) {
+		Junction junction = Restrictions.conjunction();
+		junction.add(Restrictions.eq("name", name));
+		junction.add(Restrictions.eq("state", true));
+		return exist(TestCase.class, junction, testSystemId);
 	}
 
 	public static VerifyDatabaseConfig getVerifyDatabaseConfigById(int configId) {
@@ -70,21 +90,22 @@ public class DataFactory {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("testCaseId", testCaseId);
-
-		List<TestConfig> result = findAll(TestConfig.class, map, testSystemId);
+		Junction junction = Restrictions.conjunction();
+		junction.add(Restrictions.eq("testCaseId", testCaseId));
+		List<TestConfig> result = findAll(TestConfig.class, junction, testSystemId, null);
 		if (result.size() > 0) {
 			return result.get(0);
 		}
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<VerifyDatabaseConfig> getVerifyDatabaseConfigs() {
-		List<VerifyDatabaseConfig> list = VerifyDBHelper.getList();
+		Junction junction = Restrictions.conjunction();
+		junction.add(Restrictions.eq("state", true));
+		List<VerifyDatabaseConfig> list = findAll(VerifyDatabaseConfig.class, junction, "vdbs", GBKOrder.asc("name"));
 		if (list == null) {
 			return new ArrayList<VerifyDatabaseConfig>();
 		}
-		Collections.sort(list);
 		return list;
 	}
 
@@ -93,21 +114,20 @@ public class DataFactory {
 		return HibernateHelper.getAllTestSystem();
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<TestInterface> getAllTestInterface(String testSystemId) {
 		DEBUG("DataFactory.getAllTestInterface()");
-		List<TestInterface> result = findAll(TestInterface.class, null, testSystemId);
-		Collections.sort(result);
+		Junction junction = Restrictions.conjunction();
+		junction.add(Restrictions.eq("state", true));
+		List<TestInterface> result = findAll(TestInterface.class, junction, testSystemId, GBKOrder.asc("name"));
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<TestCase> getAllTestCase(int testInterfaceId, String testSystemId) {
 		DEBUG("DataFactory.getAllTestCase()");
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("testInterfaceId", testInterfaceId);
-		List<TestCase> result = findAll(TestCase.class, map, testSystemId);
-		Collections.sort(result);
+		Junction junction = Restrictions.conjunction();
+		junction.add(Restrictions.eq("testInterfaceId", testInterfaceId));
+		junction.add(Restrictions.eq("state", true));
+		List<TestCase> result = findAll(TestCase.class, junction, testSystemId, GBKOrder.asc("name"));
 		return result;
 	}
 
@@ -216,9 +236,9 @@ public class DataFactory {
 		TestCase testCase = find(TestCase.class, testCaseId, testSystemId);
 		if (testCase != null) {
 			DEBUG("Find test case: " + testCase.toJson());
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("testCaseId", testCase.getId());
-			List<TestConfig> list = findAll(TestConfig.class, map, testSystemId);
+			Junction junction = Restrictions.conjunction();
+			junction.add(Restrictions.eq("testCaseId", testCase.getId()));
+			List<TestConfig> list = findAll(TestConfig.class, junction, testSystemId, null);
 			TestConfig dbTestConfig = list.size() > 0 ? list.get(0) : null;
 			if (dbTestConfig != null) {
 				DEBUG("TestConfig is not null, will update...=> " + testConfig.toJson());

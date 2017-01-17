@@ -2,6 +2,7 @@ package com.dangdang.tools.atf.helper;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +13,13 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.query.Query;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Order;
 
 import com.dangdang.tools.atf.entity.SoftDeleteObject;
 import com.dangdang.tools.atf.entity.TestSystem;
@@ -227,44 +230,30 @@ public class HibernateHelper extends LoggerObject {
 		return newList;
 	}
 
-	public static <T> boolean exist(Class<T> entityClass, Map<String, Object> args, String testSystemId) {
+	public static <T> List<T> exist(Class<T> entityClass, Junction junction, String testSystemId) {
 		DEBUG("Get session by id:" + testSystemId);
 		Session session = getSession(testSystemId);
 		if (session == null) {
 			ERROR("HibernateHelper.exist(): Cannot get session for " + testSystemId + ", will return an empty list");
-			return true;
+			return Collections.emptyList();
 		}
 		DEBUG("Begin new transaction");
 		Transaction transaction = beginTransaction(session);
 		if (transaction == null) {
 			ERROR("HibernateHelper.exist(): Cannot create transaction, will return an empty list");
-			return true;
+			return Collections.emptyList();
 		}
-		DEBUG("Build query...");
-		StringBuilder query = new StringBuilder();
-		query = query.append("from ").append(entityClass.getSimpleName());
-		if (args != null && !args.isEmpty() && args.size() > 0) {
-			query = query.append(" where ");
-			for (String key : args.keySet()) {
-				query = query.append(" ").append(key).append("=:" + key + " or");
-			}
-			query = query.replace(query.length() - " or".length(), query.length(), "");
-			query = query.append(" and state=:state");
+		@SuppressWarnings("deprecation")
+		Criteria criteria = session.createCriteria(entityClass);
+		if (junction != null) {
+			criteria.add(junction);
 		}
-		DEBUG("Select SDO by Query:" + query.toString());
-		Query<T> result = session.createQuery(query.toString(), entityClass);
-		if (args != null && !args.isEmpty() && args.size() > 0) {
-			Set<Entry<String, Object>> entrySet = args.entrySet();
-			for (Entry<String, Object> entry : entrySet) {
-				result.setParameter(entry.getKey(), entry.getValue());
-			}
-			result.setParameter("state", true);
-		}
-		List<T> queryResult = result.getResultList();
+		@SuppressWarnings("unchecked")
+		List<T> queryResult = criteria.list();
 		try {
 			DEBUG("transaction.commit();");
 			transaction.commit();
-			return queryResult.size() > 0;
+			return queryResult;
 		} catch (Exception ex) {
 			ERROR("HibernateHelper.exist(): cannot query SDO, Exception Message: " + ex.getMessage());
 			ex.printStackTrace();
@@ -276,7 +265,7 @@ public class HibernateHelper extends LoggerObject {
 			WARN("HibernateHelper.findAll(): Stop this connection, remove from session pool, then return an empty list");
 			StopConnect(session);
 			sessionPool.remove(testSystemId);
-			return false;
+			return Collections.emptyList();
 		}
 	}
 
@@ -314,42 +303,34 @@ public class HibernateHelper extends LoggerObject {
 		}
 	}
 
-	public static <T> List<T> findAll(Class<T> entityClass, Map<String, Object> args, String testSystemId) {
+	public static <T> List<T> findAll(Class<T> entityClass, Junction junction, String testSystemId, Order order) {
 		DEBUG("Get session by id:" + testSystemId);
 		Session session = getSession(testSystemId);
 		if (session == null) {
 			ERROR("HibernateHelper.findAll(): Cannot get session for " + testSystemId + ", will return an empty list");
-			return new ArrayList<T>();
+			return Collections.emptyList();
 		}
 		DEBUG("Begin new transaction");
 		Transaction transaction = beginTransaction(session);
 		if (transaction == null) {
 			ERROR("HibernateHelper.findAll(): Cannot create transaction, will return an empty list");
-			return new ArrayList<T>();
+			return Collections.emptyList();
 		}
-		DEBUG("Build query...");
-		StringBuilder query = new StringBuilder();
-		query = query.append("from ").append(entityClass.getSimpleName());
-		if (args != null && !args.isEmpty() && args.size() > 0) {
-			query = query.append(" where ");
-			for (String key : args.keySet()) {
-				query = query.append(" ").append(key).append("=:" + key + " and");
-			}
-			query.replace(query.length() - " and".length(), query.length(), "");
+		@SuppressWarnings("deprecation")
+		Criteria criteria = session.createCriteria(entityClass);
+		if (order != null) {
+			criteria.addOrder(order);
 		}
-		DEBUG("Select SDO by Query:" + query.toString());
-		Query<T> result = session.createQuery(query.toString(), entityClass);
-		if (args != null && !args.isEmpty() && args.size() > 0) {
-			Set<Entry<String, Object>> entrySet = args.entrySet();
-			for (Entry<String, Object> entry : entrySet) {
-				result.setParameter(entry.getKey(), entry.getValue());
-			}
+		if (junction != null) {
+			criteria.add(junction);
 		}
-		List<T> queryResult = result.getResultList();
+		@SuppressWarnings("unchecked")
+		List<T> queryResult = criteria.list();
 		try {
 			DEBUG("transaction.commit();");
 			transaction.commit();
 			DEBUG("Clean deleted SDO");
+
 			List<T> ret = clean(queryResult);
 			session.close();
 			return ret;
@@ -364,7 +345,7 @@ public class HibernateHelper extends LoggerObject {
 			WARN("HibernateHelper.findAll(): Stop this connection, remove from session pool, then return an empty list");
 			StopConnect(session);
 			sessionPool.remove(testSystemId);
-			return new ArrayList<T>();
+			return Collections.emptyList();
 		}
 	}
 
