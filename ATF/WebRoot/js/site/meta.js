@@ -966,8 +966,40 @@ databaseServerListViewModel = function() {
 
 databaseServerCreateViewModel = function() {
 	var vm = this;
+	
+	vm.select_options = ko.observableArray([{option: "MySQL Server", value: "mysql"},{option: "Microsoft SQL Server", value: "sqlserver"}]);
 
+	//var editItem = $.gs.editItem();
+	
 	vm.isSavingData = ko.observable(false);
+	vm.typeArray = ko.observableArray(["Mysql", "MSSQL"]);
+/*	vm.model = {
+			name : ko.observable(editItem.name),
+			type: ko.observable(editItem.type),
+			ip: ko.observable(editItem.ip),
+			port: ko.observable(editItem.port),
+			uid: ko.observable(editItem.uid),
+			pwd: ko.observable(editItem.pwd),
+			more: ko.observable(editItem.mo),
+		};*/
+	vm.model = {
+		name : ko.observable(),
+		type: ko.observable("mysql"),
+		ip: ko.observable(),
+		port: ko.observable("3306"),
+		uid: ko.observable(),
+		pwd: ko.observable(),
+		more: ko.observable(),
+	};
+	vm.clearData = function() {
+		vm.model.name("");
+		vm.model.type("mysql");
+		vm.model.ip("");
+		vm.model.port("");
+		vm.model.uid("");
+		vm.model.pwd("");
+		vm.model.more("");
+	};
 
 	databaseServerCreateViewModel.prototype.vm = vm;
 	databaseServerCreateViewModel.prototype.currentBlade = ko.observable();
@@ -975,8 +1007,40 @@ databaseServerCreateViewModel = function() {
 
 databaseServerEditViewModel = function() {
 	var vm = this;
+	
+	vm.select_options = ko.observableArray([{option: "MySQL Server", value: "mysql"},{option: "Microsoft SQL Server", value: "sqlserver"}]);
+
+	var editItem = $.gs.editItem();
+/*	vm.full_type = ko.computed(function(){
+		var ret_option = "";
+			ko.utils.arrayForEach(vm.select_options, function(item){
+				if(item.value == editItem.type){
+					ret_option = item.option;
+				}
+			});
+			retrun ret_option;
+		});*/
 
 	vm.isSavingData = ko.observable(false);
+	vm.id = editItem.id;
+	vm.model = {
+		name : ko.observable(editItem.name),
+		type: ko.observable(editItem.type),
+		ip: ko.observable(editItem.ip),
+		port: ko.observable(editItem.port),
+		uid: ko.observable(editItem.uid),
+		pwd: ko.observable(editItem.pwd),
+		more: ko.observable(editItem.mo),
+	};
+	vm.clearData = function() {
+		vm.model.name("");
+		vm.model.type("mysql");
+		vm.model.ip("");
+		vm.model.port("");
+		vm.model.uid("");
+		vm.model.pwd("");
+		vm.model.more("");
+	};
 
 	databaseServerEditViewModel.prototype.vm = vm;
 	databaseServerEditViewModel.prototype.currentBlade = ko.observable();

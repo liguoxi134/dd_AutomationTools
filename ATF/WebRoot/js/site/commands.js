@@ -653,12 +653,77 @@ databaseServerListViewModel.prototype.getCommands = function() {
 
 databaseServerCreateViewModel.prototype.getCommands = function() {
 	var vm = databaseServerCreateViewModel.prototype.vm;
+
+	function verfiyIsEmpty(field, msg) {
+		if (field == "" || field == undefined) {
+			alert(msg);
+			return false;
+		}
+		return true;
+	}
+	
+	function validateIP(what, msg)   
+	{  
+
+	    if(what.search(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/) == -1)  {
+	    	alert(msg);
+	        return false;  
+	    }
+	    var fs = 0,ls = 0;  
+	    var myArray = what.split(/\./);  
+	    var i;  
+	    for( i = 0; i < 4; i ++ )   
+	    {  
+	        if( !$.isNumeric(myArray[i]) ) 
+	        {
+	        	alert(msg);
+	            return false; 
+	        }
+	  
+	        var t=Number(myArray[i]);  //每个域值范围0-255   
+	        if( (t<0) || (t>255) )  
+	            return false;  
+	    }     
+	    fs= parseInt(myArray[0]);   //取第一位进行校验  
+	    ls = parseInt(myArray[3]);  //取最后一位进行校验  
+	      
+	    //主机部分不能全是1和0（第一位不能为255和0），网络部分不能全是0（最后一位不能为0）   
+	    if((fs == 255) || (fs ==0) || (ls == 0))  
+	    {  
+	    	alert(msg);
+	        return false;  
+	    }  
+	    return true;  
+	}
+	
+	function verify(ip, name) {
+
+		if (!verfiyIsEmpty(name, "服务器名称不能为空")) return false;
+		if (!verfiyIsEmpty(ip, "ip 不能为空 ")) return false;
+		
+		if (!validateIP(ip, "ip 地址无效")) return false;
+		
+		return true;
+	}
+	
 	var saveServerCommand = {
 		icon : $.bladeIcons.saveIcon,
 		text : "保存",
 		click : function() {
-			var model = $.gs.editItem();
-			$.post("./dbs/add", model, function(data) {
+			
+			if (!verify(vm.model.ip(), vm.model.name())) return false;
+			var postData = {
+				"ip": vm.model.ip(),
+				"more": vm.model.more(),
+				"name": vm.model.name(),
+				"port": vm.model.port(),
+				"pwd": vm.model.pwd(),
+				"type": vm.model.type(),
+				"uid": vm.model.uid(),
+			}
+			vm.isSavingData(true);
+			$.post("./dbs/add", postData, function(data) {
+				vm.isSavingData(false);
 				alert(data.message);
 				var prev = vm.currentBlade().prev();
 				$(prev).closeNextAllBlades();
@@ -677,20 +742,102 @@ databaseServerCreateViewModel.prototype.getCommands = function() {
 
 databaseServerEditViewModel.prototype.getCommands = function() {
 	var vm = databaseServerEditViewModel.prototype.vm;
-	var saveServerCommand = {
-		icon : $.bladeIcons.saveIcon,
-		text : "保存",
-		click : function() {
-			var model = $.gs.editItem();
-			$.post("./dbs/edit", model, function(data) {
-				alert(data.message);
-				var prev = vm.currentBlade().prev();
-				$(prev).closeNextAllBlades();
-				prev.refreshBlade();
-				prev.ensureElementIntoView();
-			});
+	
+	function verfiyIsEmpty(field, msg) {
+		if (field == "" || field == undefined) {
+			alert(msg);
+			return false;
 		}
+		return true;
 	}
+	
+	function validateIP(what, msg)   
+	{  
+		
+	    if(what.search(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/) == -1)  {
+	    	alert(msg);
+	        return false;  
+	    }
+	    var fs = 0,ls = 0;  
+	    var myArray = what.split(/\./);  
+	    var i;  
+	    for( i = 0; i < 4; i ++ )   
+	    {  
+	        if( !$.isNumeric(myArray[i]) ) 
+	        {
+	        	alert(msg);
+	            return false; 
+	        }
+	  
+	        var t=Number(myArray[i]);  //每个域值范围0-255   
+	        if( (t<0) || (t>255) )  
+	            return false;  
+	    }     
+	    fs= parseInt(myArray[0]);   //取第一位进行校验  
+	    ls = parseInt(myArray[3]);  //取最后一位进行校验  
+	      
+	    // 主机部分不能全是1和0（第一位不能为255和0），网络部分不能全是0（最后一位不能为0）   
+	    if((fs == 255) || (fs ==0) || (ls == 0))  
+	    {  
+	    	alert(msg);
+	        return false;  
+	    }  
+	    return true;  
+	}
+	
+	function verify() {
+		if (!verfiyIsEmpty($.gs.editItem().name, "服务器名称不能为空")) return false;
+		if (!verfiyIsEmpty($.gs.editItem().ip, "ip 不能为空 ")) return false;
+		
+		if (!validateIP($.gs.editItem().ip, "ip 地址无效")) return false;
+		
+		return true;
+	}
+	
+/*	var saveServerCommand = {
+			icon : $.bladeIcons.saveIcon,
+			text : "保存",
+			click : function() {
+				var model = $.gs.editItem();
+				$.post("./dbs/edit", model, function(data) {
+					alert(data.message);
+					var prev = vm.currentBlade().prev();
+					$(prev).closeNextAllBlades();
+					prev.refreshBlade();
+					prev.ensureElementIntoView();
+				});
+			}
+		}*/
+	
+	var saveServerCommand = {
+			icon : $.bladeIcons.saveIcon,
+			text : "保存",
+			click : function() {
+				var model = $.gs.editItem();
+				if (!verify()) return false;
+				var postData = {
+					"id": model.id,
+					"ip": model.ip,
+					"more": model.more,
+					"name": model.name,
+					"port": model.port,
+					"pwd": model.pwd,
+					"type": model.type,
+					"uid": model.uid,
+				}
+				vm.isSavingData(true);
+//				alert(postData.id)
+				$.post("./dbs/edit", postData, function(data) {
+					vm.isSavingData(false);
+ 				    alert(data.message);
+					var prev = vm.currentBlade().prev();
+					$(prev).closeNextAllBlades();
+					prev.refreshBlade();
+					prev.ensureElementIntoView();
+				});
+			}
+		}
+	
 	var resetServerCommand = {
 		icon : $.bladeIcons.refreshIcon,
 		text : "重置",
