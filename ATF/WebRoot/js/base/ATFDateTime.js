@@ -1,3 +1,4 @@
+
 ATFDateTime = function() {
 	var _self = this;
 	var theDate = new Date();
@@ -20,7 +21,7 @@ ATFDateTime = function() {
 			var ds = [];
 			if (_self.select.selectYear() && _self.select.selectMonth()) {
 				var myDate = new Date(_self.select.selectYear(), _self.select.selectMonth(), 0);
-				for ( var i = 1; i <= myDate.getDate(); i++) {
+				for (var i = 1; i <= myDate.getDate(); i++) {
 					ds.push({
 						id : i,
 						name : i.toString().length == 1 ? "0" + i : i
@@ -32,17 +33,16 @@ ATFDateTime = function() {
 		hours : ko.observableArray(),
 		minutes : ko.observableArray(),
 		seconds : ko.observableArray(),
-
 	};
 
-	for ( var i = 1; i <= 12; i++) {
+	for (var i = 1; i <= 12; i++) {
 		_self.enums.months.push({
 			id : i,
 			name : i.toString().length == 1 ? "0" + i : i
 		});
 	}
 
-	for ( var i = 0; i < 24; i++) {
+	for (var i = 0; i < 24; i++) {
 		_self.enums.years.push({
 			id : theDate.getFullYear() + i,
 			name : theDate.getFullYear() + i
@@ -53,7 +53,7 @@ ATFDateTime = function() {
 		});
 	}
 
-	for ( var i = 0; i < 60; i++) {
+	for (var i = 0; i < 60; i++) {
 		_self.enums.minutes.push({
 			id : i,
 			name : i.toString().length == 1 ? "0" + i : i

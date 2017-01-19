@@ -15,17 +15,16 @@ textarea {
 }
 select::-ms-expand {
 	display:none;
-}
-.fxs-portal {
-	font-family:微软雅黑,黑体,宋体,"Segoe UI","Segoe WP",Tahoma,Arial,sans-serif;
-	position:fixed;
-	left:0;
-	right:0;
-	top:0;
-	bottom:0;
-	overflow:hidden;
-	transition:background .25s ease;
-	z-index:0;
+}.fxs-portal {
+	font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", STHeiti, "Microsoft YaHei";
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	overflow: hidden;
+	transition: background .25s ease;
+	z-index: 0;
 }
 .fxs-topbar {
 	height:40px;

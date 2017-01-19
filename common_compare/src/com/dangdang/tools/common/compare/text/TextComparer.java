@@ -6,7 +6,7 @@ public class TextComparer implements IComparer {
 
 	@Override
 	public String compare(String expect, String real) throws Exception {
-		// TODO Auto-generated method stub
+		
 		return "";
 
 	}

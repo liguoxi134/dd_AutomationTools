@@ -78,7 +78,7 @@ public class HibernateHelper extends LoggerObject {
 
 	public static List<TestSystem> getAllTestSystem() {
 		DEBUG("HibernateHelper.getAllTestSystem(): get all test systems");
-		return new ArrayList<>(TESTSYSTEMMAP.values());
+		return new ArrayList<TestSystem>(TESTSYSTEMMAP.values());
 	}
 
 	private static Configuration configConnection(String testSystemId) {

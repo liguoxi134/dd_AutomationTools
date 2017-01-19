@@ -48,9 +48,10 @@
 	<div class="fxs-portal-content fxs-panorama">
 		<div class="fxs-startboard-target fxs-theme-context-start fxs-startboard fx-rightClick"></div>
 		<div class="fxs-journey-target fxs-journey">
-			<div class="fxs-journey-layout fxs-stacklayout-horizontal fxs-stacklayout"></div>
+			<div style="background-color: #eceff3" class="fxs-home-layout fxs-stacklayout-horizontal fxs-stacklayout">
+			<jsp:include page="/part_info.jsp"></jsp:include>
+			</div>
 		</div>
+		<div class="fxs-journey-layout fxs-stacklayout-horizontal fxs-stacklayout"></div>
 	</div>
 </div>
-</body>
-</html>

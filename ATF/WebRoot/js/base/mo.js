@@ -13,7 +13,13 @@ var callback = function(records, instance) {
 	records.map(function(record) {
 		if (record.type === "childList") {
 			$.gs.blades.data.removeAll();
-			$(".fxs-journey-layout>section.fxs-blade-placeholder").each(function() {
+			var currentBlades = $(".fxs-journey-layout>section.fxs-blade-placeholder");
+			if (currentBlades.length > 0) {
+				$(".fxs-home-layout").hide();
+			} else {
+				$(".fxs-home-layout").show();
+			}
+			currentBlades.each(function() {
 				var title = $(".fxs-blade-title-titleText", this).get(0);
 				var nodes = title.childNodes;
 				var names = [];

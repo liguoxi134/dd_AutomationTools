@@ -1,0 +1,149 @@
+@CHARSET "UTF-8";
+
+.fxs-home-layout .info-center {
+	font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma,
+		"Hiragino Sans GB", STHeiti, "Microsoft YaHei";
+	width: 100%;
+	font-size: 14px;
+	line-height: 1.42857143;
+	display: flex;
+	flex-direction: column;
+	height: 70px;
+}
+
+.fxs-home-layout .info-center .info-title {
+	margin-top: 30px;
+	margin-bottom: 10px;
+	padding-left: 15px;
+	padding-right: 15px;
+	display: flex;
+	height: 70px;
+}
+
+.fxs-home-layout .info-center .info-title h4 {
+	margin-bottom: 0px;
+	margin-top: 10px;
+}
+
+.fxs-home-layout .info-center .time-title {
+	height: 70px;
+}
+
+.fxs-home-layout .info-center .user-title {
+	width: 100%;
+}
+
+.fxs-home-layout .info-center .year-month {
+	padding: 10px;
+	background-color: #09C;
+	/* height: 100%; */
+	color: #FFF;
+	/* width: 200px; */
+	/* display: flex; */
+	/* flex-direction: column; */
+}
+
+.fxs-home-layout .info-center .hour-minute {
+	color: #09C;
+	line-height: 70px;
+	background-color: #FFF;
+	padding-left: 10px;
+	padding-right: 10px;
+	border: 1px solid #09C;
+}
+
+.fxs-home-layout .info-center .hour-minute strong {
+	font-size: 34px;
+}
+
+.fxs-home-layout .year-month p {
+	margin-bottom: 0px;
+	margin-top: 0;
+	white-space: nowrap;
+}
+
+.fxs-home-layout .year-month p span {
+	font-size: 24px;
+}
+
+.fxs-home-layout .info-main {
+	margin: 30px 0 15px 0;
+}
+
+.fxs-home-layout .tile.flex-h {
+	display: flex;
+	flex-direction: row;
+}
+
+.fxs-home-layout .tile-icon {
+	width: 30%;
+	text-align: center;
+	align-self: center;
+	/*! background-color: gray; */
+	/*! padding: calc(30% - 40px); */
+}
+
+.fxs-home-layout .tile-icon>* {
+	width: 40px;
+	height: 40px;
+	fill: #59b4d9;
+}
+
+.fxs-home-layout .tile-content {
+	width: 70%;
+	text-align: center;
+	/*! font-size: 46px; */
+	margin-top: 0;
+	margin-bottom: 10px;
+	/*! font-weight: 500; */
+	/*! line-height: 1.1; */
+}
+
+.fxs-home-layout .tile-header, .fxs-home-layout caption {
+	padding: 0;
+	margin: 10px 0 5px 0;
+	line-height: 25px;
+	color: #666;
+	font-size: 18px;
+}
+
+.fxs-home-layout .tile-count {
+	font-size: 46px;
+	font-weight: 500;
+	line-height: 1.1;
+	margin: 0 0 10px 0;
+	color: #666;
+}
+
+.fxs-home-layout .tile-action {
+	background-color: #59b4d9;
+	width: 100%;
+	padding: 5px;
+	color: white;
+	font-weight: 500;
+	border: none;
+	cursor: pointer;
+}
+
+.fxs-home-layout {
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.fxs-home-layout .tile table {
+	border-collapse: collapse;
+	white-space: nowrap;
+	table-layout: fixed;
+}
+
+.fxs-home-layout .tile table tr {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	/* padding: 5px; */
+}
+
+.fxs-home-layout .tile table tr td {
+	padding: 5px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
