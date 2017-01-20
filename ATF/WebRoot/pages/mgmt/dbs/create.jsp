@@ -7,7 +7,7 @@
 	<!-- /ko -->
 	<!-- ko if: !isSavingData() -->	
 	<atf:form_text text="服务器名称" tip="给数据库校验服务器起个名" bind="value: model.name, valueUpdate: 'afterkeydown'"></atf:form_text>
-	<atf:form_select text="服务器类型" tip="服务器类型只支持  MySql或者 SQLServer，请填写 : MySQL Server或者 Microsoft SQL Server" bind="options: $root.select_options, optionsText: 'option', optionsValue: 'value', value: model.type"></atf:form_select>
+	<atf:form_select text="服务器类型" tip="服务器类型只支持  MySql或者 SQLServer，请填写 : MySQL Server或者  Microsoft SQL Server" bind="options: $root.select_options, optionsText: 'option', optionsValue: 'value', value: model.type"></atf:form_select>
 	<atf:form_text text="服务器IP" tip="服务器IP地址" bind="value: model.ip, valueUpdate: 'afterkeydown'"></atf:form_text>
 	<atf:form_text text="接入端口" tip="数据库接入端口，如：MySql默认为：3306" bind="value: model.port, valueUpdate: 'afterkeydown'"></atf:form_text>
 	<atf:form_text text="登录用户" tip="登录数据库的用户" bind="value: model.uid, valueUpdate: 'afterkeydown'"></atf:form_text>

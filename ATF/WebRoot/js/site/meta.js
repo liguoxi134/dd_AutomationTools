@@ -1011,6 +1011,7 @@ databaseServerEditViewModel = function() {
 	vm.select_options = ko.observableArray([{option: "MySQL Server", value: "mysql"},{option: "Microsoft SQL Server", value: "sqlserver"}]);
 
 	var editItem = $.gs.editItem();
+	
 /*	vm.full_type = ko.computed(function(){
 		var ret_option = "";
 			ko.utils.arrayForEach(vm.select_options, function(item){

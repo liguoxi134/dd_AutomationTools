@@ -769,7 +769,7 @@ databaseServerEditViewModel.prototype.getCommands = function() {
 	            return false; 
 	        }
 	  
-	        var t=Number(myArray[i]);  //每个域值范围0-255   
+	        var t=Number(myArray[i]);  // 每个域值范围0-255   
 	        if( (t<0) || (t>255) )  
 	            return false;  
 	    }     
@@ -782,6 +782,7 @@ databaseServerEditViewModel.prototype.getCommands = function() {
 	    	alert(msg);
 	        return false;  
 	    }  
+	    
 	    return true;  
 	}
 	
